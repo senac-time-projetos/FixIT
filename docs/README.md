@@ -3,6 +3,7 @@
 | Arquivo | Conteúdo |
 | --- | --- |
 | [PROJECT_DEFINITION.md](PROJECT_DEFINITION.md) | Proposta, equipe, perfis e escopo |
+| [PLANEJAMENTO.md](PLANEJAMENTO.md) | Backlog, histórias, sprint e entregas |
 | [SETUP_XAMPP.md](SETUP_XAMPP.md) | Instalação e configuração local |
 | [ARQUITETURA.md](ARQUITETURA.md) | Organização do código |
 | [IDENTIDADE_VISUAL.md](IDENTIDADE_VISUAL.md) | Referências para as telas |
