@@ -1,56 +1,46 @@
-# Definição do Projeto
+# Definição do FixIT
 
-> Use este documento para registrar a identidade do grupo, a proposta da aplicação e os principais dados da Atividade 01.
+## Proposta
 
-## Para que serve
+Sistema de suporte de TI interno para uma empresa de médio porte. Pedidos por mensagens, telefone ou pessoalmente dificultam o acompanhamento. O FixIT reúne essas solicitações em chamados com responsável, status e histórico.
 
-Este arquivo concentra as informações que definem o projeto antes do desenvolvimento começar. Ele evita decisões soltas em mensagens, protege o escopo e ajuda a equipe a manter o mesmo entendimento sobre a solução.
+O público são os colaboradores e a equipe de TI. A persona é Mariana Oliveira, analista administrativa de 34 anos, que precisa registrar um problema e saber quem está cuidando dele.
 
-## Equipe
+## Perfis
 
-**Nome da equipe:**
+| Perfil | Acesso previsto |
+| --- | --- |
+| Colaborador | Abrir chamados, consultar os próprios registros e comentar |
+| Técnico | Consultar a fila, assumir, atualizar e encerrar chamados com solução |
+| Administrador | Consultar todos os chamados e gerenciar usuários e categorias |
 
-**Integrantes:**
+## Escopo inicial
 
-| Nome | GitHub | Responsabilidade |
-|---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+- Autenticação com sessão PHP e permissões por perfil.
+- Cadastro, edição e desativação de usuários e categorias.
+- Chamados com título, descrição, categoria e prioridade.
+- Busca e filtros por status, categoria e prioridade.
+- Atribuição de técnico, comentários e histórico.
+- Encerramento com solução e consulta aos atendimentos anteriores.
+- Resumo dos chamados abertos, em atendimento e encerrados.
 
-## Aplicação
+Status: `aberto → em_atendimento → encerrado`. Prioridades: `baixa`, `media` e `alta`.
 
-**Nome:**
+## Regras principais
 
-**Segmento:**
+- Todo chamado tem um solicitante e uma categoria.
+- Um chamado em atendimento precisa de técnico responsável.
+- O colaborador acessa somente os próprios chamados.
+- O encerramento exige uma solução.
+- Alterações relevantes ficam no histórico.
+- Usuários e categorias são desativados para preservar os registros anteriores.
 
-**Problema:**
+A disciplina pede CRUD completo de uma entidade principal. A equipe deve confirmar com o professor se a desativação atende à operação de exclusão esperada.
 
-**Público-alvo:**
+## Fora da primeira versão
 
-**Objetivo:**
+Aplicativo nativo, WhatsApp, IA, diagnóstico automático, acesso remoto, monitoramento, inventário, estoque, financeiro e SLA avançado.
 
-## Funcionalidades iniciais
+## Equipe e referências
 
-- 
-- 
-- 
-
-## Entidades iniciais do banco
-
-1. 
-2. 
-
-**Relacionamento esperado:**
-
-```text
-ENTIDADE_A (1) -------- (N) ENTIDADE_B
-```
-
-## Links
-
-- Figma:
-- Board:
-- Organization:
-- Repositório:
+Os integrantes e as responsabilidades estão no [README](../README.md#equipe). O escopo completo e a persona estão no [Notion do grupo](https://app.notion.com/p/FixIT-3c4e668ab69a80e8b30ace47a10c5cce).

@@ -5,8 +5,8 @@
  * Esta tela existe apenas para validar que PHP + Apache/XAMPP
  * estão funcionando. Ela NÃO representa a interface final do projeto.
  */
-$projectName = 'Nome da Aplicação';
-$teamName = 'Nome da Equipe';
+$projectName = 'FixIT';
+$teamName = 'Time Projetos — Senac';
 ?>
 <!doctype html>
 <html lang="pt-BR">
