@@ -1,44 +1,24 @@
-# Identidade Visual
+# Identidade visual
 
-> Registre aqui a referência visual do projeto para que a equipe mantenha consistência entre Figma, front-end e documentação.
+A referência é o [arquivo FixIT no Figma](https://www.figma.com/design/cDIySt35PWPGPdHDbzdkR0/FixIT), com a identidade original e as telas simplificadas do MVP.
 
-## Para que serve
+## Proposta simplificada
 
-Use este documento para guardar as decisões visuais do projeto e facilitar a tradução da identidade do Figma para o front-end.
+| Uso | Cor |
+| --- | --- |
+| Botão principal e destaque | `#0A5FF8` |
+| Texto principal | `#081529` |
+| Texto secundário | `#52627B` |
+| Fundo | `#F5F7FB` |
+| Bordas | `#DCE3ED` |
+| Cards | `#FFFFFF` |
+
+A fonte da proposta é Inter. Confira a versão aprovada no Figma antes de implementar as telas.
 
 ## Logo
 
-Adicione a logo em:
+A logo original está no componente `Logo_FixIT` do Figma. Exporte a versão aprovada para `frontend/assets/logos/`. O arquivo ainda não está no repositório.
 
-```text
-frontend/assets/logos/
-```
+Use componentes compartilhados para cabeçalho, botões, campos e cards. No celular, as tabelas de chamados podem virar cartões.
 
-## Paleta de cores
-
-| Token | HEX | Aplicação |
-|---|---|---|
-| Primary |  |  |
-| Secondary |  |  |
-| Background |  |  |
-| Text |  |  |
-| Success |  |  |
-| Error |  |  |
-
-## Tipografia
-
-**Títulos:**
-
-**Textos:**
-
-**Botões/interface:**
-
-## Componentes definidos no Figma
-
-- [ ] Navbar
-- [ ] Botão principal
-- [ ] Botão secundário
-- [ ] Input
-- [ ] Card
-- [ ] Feedback de sucesso
-- [ ] Feedback de erro
+A página inicial atual usa Bootstrap e ainda não corresponde às telas do protótipo.

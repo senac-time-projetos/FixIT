@@ -1,19 +1,9 @@
-# START HERE — Primeiros passos da equipe
+# Primeiros passos
 
-Use este arquivo como checklist rápido para sair do zero até o primeiro acesso do projeto no XAMPP.
+1. Leia o [README](README.md) para entender o estado atual do FixIT.
+2. Siga o [guia do XAMPP](docs/SETUP_XAMPP.md).
+3. Consulte o [escopo](docs/PROJECT_DEFINITION.md) e a [arquitetura](docs/ARQUITETURA.md).
+4. Escolha uma Issue e crie uma branch.
+5. Abra um Pull Request e peça revisão.
 
-1. ⭐ Dê Star no repositório-base do professor;
-2. 🏢 Crie a GitHub Organization da equipe;
-3. 👥 Convide integrantes e professor;
-4. 🍴 Faça o Fork para a Organization;
-5. 🌐 Confirme que o repositório está público;
-6. 📥 Clone dentro de `C:\xampp\htdocs`;
-7. ▶️ Inicie Apache e MySQL no XAMPP;
-8. 🌍 Acesse `http://localhost/NOME-DO-REPOSITORIO/`;
-9. 📝 Leia as Atividades 01 e 02 no `README.md`;
-10. ✏️ Personalize `README.md` e `docs/PROJECT_DEFINITION.md`;
-11. 🎨 Adicione os links do Figma e do board;
-12. 🧩 Crie as primeiras Issues;
-13. 🌿 Crie a primeira branch;
-14. 💻 Faça a primeira alteração;
-15. 🔀 Abra um Pull Request e solicite Review de outro integrante.
+O fluxo está em [CONTRIBUTING.md](CONTRIBUTING.md). Os exemplos do professor foram preservados em [docs/referencias/template-professor](docs/referencias/template-professor/).

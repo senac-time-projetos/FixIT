@@ -1,641 +1,107 @@
-# Projeto Integrador — PHP + MySQL
+# FixIT
 
-> Repositório-base da disciplina para iniciar o Projeto Integrador utilizando **PHP puro, MySQL, phpMyAdmin, HTML, CSS, JavaScript, Bootstrap, XAMPP, Git e GitHub**.
+Sistema de chamados de suporte de TI desenvolvido no Projeto Integrador II do Senac.
 
-Este repositório **não é um projeto pronto**. Ele contém a estrutura inicial, exemplos, templates e orientações que cada equipe deverá adaptar para o próprio projeto.
+O colaborador registra um problema e acompanha o atendimento. O técnico organiza a fila, assume chamados e informa a solução. O administrador gerencia os usuários e as categorias.
 
----
+## Situação atual
 
-## Materiais da disciplina
+O projeto está na fase de estruturação. Existem uma página inicial em PHP, uma tela provisória de login, Bootstrap e exemplos de configuração do banco. **Autenticação, permissões e CRUD ainda não estão implementados.**
 
-> **Professor:** substitua os três placeholders abaixo pelos links oficiais antes de disponibilizar o repositório aos alunos.
+O SQL atual veio do template: cria o banco `projeto_integrador` e a tabela `users`. As cinco tabelas do modelo do FixIT ainda precisam ser implementadas.
 
-- 📊 **Aula 01 — Definição do Projeto:** [`INSERIR_LINK_PPT_AULA_01`](https://docs.google.com/presentation/d/1aHc31MrEDHxEBw8pOtDuAwAxgzIZJi4l/edit?usp=sharing&ouid=112595941029232116373&rtpof=true&sd=true)
-- 🌿 **Aula 02 — Git e GitHub:** [`INSERIR_LINK_PPT_AULA_02`](https://docs.google.com/presentation/d/1ooSOhHy7P4sLNeCdVd0QGIS4AEnzlNMK/edit?usp=sharing&ouid=112595941029232116373&rtpof=true&sd=true)
-- 📚 **Notion da disciplina:** [`LINK_NOTION_DISCIPLINA`](https://deluxe-blue-bc1.notion.site/Projeto-Integrador-II-Aplica-o-Web-Din-mica-305dfca74d8d80ee9cf3dbbb08257c7c?source=copy_link)
+## Tecnologias
 
----
+- HTML, CSS, JavaScript e Bootstrap na interface.
+- PHP puro, com organização MVC simplificada.
+- MySQL e PDO para acesso aos dados.
+- XAMPP e phpMyAdmin no ambiente local.
+- Git e GitHub para versionamento; Figma para as telas.
 
-# Antes de começar
+## Primeira versão
 
-Cada grupo deverá possuir **no máximo 4 integrantes**.
+- Login, logout e acesso por perfil: colaborador, técnico e administrador.
+- Abertura de chamados com título, descrição, categoria e prioridade.
+- Consulta, busca e filtros por status, prioridade e categoria.
+- Atribuição de técnico, comentários e histórico.
+- Registro de solução e encerramento.
+- Cadastro, edição e desativação de usuários e categorias.
+- Resumo da quantidade de chamados por situação.
 
-O projeto será desenvolvido durante a disciplina e deverá representar uma aplicação web para **prestação, contratação, agendamento ou gerenciamento de serviços**.
+Inventário, SLA, inteligência artificial e integrações ficam fora da primeira versão. Veja o [escopo](docs/PROJECT_DEFINITION.md).
 
-Independentemente do tema escolhido, o projeto final deverá possuir:
+## Como executar
 
-1. Tela de login com autenticação via banco de dados;
-2. Área administrativa protegida;
-3. Pelo menos duas entidades relacionadas no banco;
-4. CRUD completo de pelo menos uma entidade principal;
-5. Front-end, back-end e banco de dados integrados;
-6. Interface funcional, navegável e consistente com a identidade visual definida pela equipe.
+1. Inicie Apache e MySQL no XAMPP.
+2. Clone dentro de `htdocs`:
 
----
+   ```powershell
+   cd C:\xampp\htdocs
+   git clone https://github.com/senac-time-projetos/FixIT.git
+   cd FixIT
+   Copy-Item backend/config/database.example.php backend/config/database.php
+   ```
 
-# Fluxo inicial obrigatório no GitHub
+3. No [phpMyAdmin](http://localhost/phpmyadmin), importe `database/database.sql`.
+4. Ajuste usuário, senha e porta em `backend/config/database.php`. O nome do banco atual é `projeto_integrador`. Não envie esse arquivo ao GitHub.
+5. Acesse [localhost/FixIT](http://localhost/FixIT/).
 
-Antes de alterar qualquer arquivo, a equipe deverá preparar o ambiente de colaboração.
+Se já tiver uma configuração local, preserve-a em vez de copiar o exemplo novamente. A página inicial confirma que o PHP executa; o login é provisório e não consulta o banco. Não há conta de teste nesta etapa.
 
-## 1. Dê uma Star neste repositório
+Instruções completas: [configuração do XAMPP](docs/SETUP_XAMPP.md).
 
-Na página deste repositório no GitHub, clique em **Star**.
-
-A Star será utilizada para marcar o repositório-base utilizado na disciplina.
-
-## 2. Crie uma Organization no GitHub
-
-A equipe deverá criar uma **GitHub Organization** utilizando, preferencialmente, o nome da equipe.
-
-Exemplo:
-
-```text
-Equipe: DevForge
-Organization: devforge
-```
-
-A Organization deverá concentrar o repositório oficial do grupo.
-
-## 3. Adicione os integrantes
-
-Convide para a Organization:
-
-- Todos os integrantes da equipe;
-- O professor: `@USUARIO_DO_PROFESSOR`.
-
-> Substitua o placeholder pelo usuário informado pelo professor.
-
-## 4. Faça o Fork
-
-Clique em **Fork** neste repositório e, quando o GitHub solicitar o proprietário, selecione a **Organization da equipe**.
-
-O repositório criado pelo Fork deverá permanecer **público**.
-
-### Nome sugerido
-
-Troque o nome pelo nome real da aplicação.
+## Estrutura
 
 ```text
-agenda-facil
-pet-care
-fix-service
-studio-booking
-```
-
-## 5. Faça o Clone
-
-Como o projeto será executado com **XAMPP**, faça o clone dentro da pasta `htdocs`.
-
-No Windows:
-
-```bash
-cd C:\xampp\htdocs
-```
-
-Depois:
-
-```bash
-git clone URL_DO_REPOSITORIO_DA_EQUIPE
-```
-
-Entre na pasta:
-
-```bash
-cd nome-do-projeto
-```
-
-Confira os remotes:
-
-```bash
-git remote -v
-```
-
-O `origin` deve apontar para o repositório da **Organization da equipe**.
-
----
-
-# Ambiente de desenvolvimento — XAMPP
-
-O projeto será executado localmente utilizando o **XAMPP**.
-
-A equipe deverá utilizar:
-
-- **Apache** — servidor local;
-- **PHP** — back-end;
-- **MySQL** — banco de dados;
-- **phpMyAdmin** — administração do banco.
-
-## Executando o projeto
-
-1. Abra o **XAMPP Control Panel**;
-2. Inicie **Apache**;
-3. Inicie **MySQL**;
-4. Certifique-se de que o repositório está dentro de `C:\xampp\htdocs`;
-5. Abra o navegador;
-6. Acesse:
-
-```text
-http://localhost/NOME-DO-REPOSITORIO/
-```
-
-O arquivo `index.php` da raiz redirecionará para a aplicação em `frontend/`.
-
-## Acessando o phpMyAdmin
-
-```text
-http://localhost/phpmyadmin
-```
-
-O arquivo inicial do banco está em:
-
-```text
-database/database.sql
-```
-
-A equipe deverá **editar esse arquivo** de acordo com o modelo de dados do próprio projeto.
-
----
-
-# ATIVIDADE 01 — Definição do Projeto
-
-## Objetivo
-
-Definir a proposta do projeto, a equipe, o segmento, o nome da aplicação e sua identidade visual antes do início da implementação.
-
-## 1. Formação da equipe
-
-Formem grupos com **no máximo 4 integrantes**.
-
-Definam um responsável principal para cada área:
-
-- **Back-end Lead** — PHP, regras de negócio, autenticação e banco;
-- **Front-end Lead** — HTML, CSS, JavaScript, Bootstrap e integração das telas;
-- **Design Lead** — identidade visual, componentes e protótipos no Figma;
-- **Project Management Lead** — organização das tarefas, acompanhamento e governança do projeto.
-
-> Os papéis indicam a responsabilidade principal. Todos deverão colaborar no desenvolvimento.
-
-A equipe deverá registrar:
-
-- Nome da equipe;
-- Nome dos integrantes;
-- Papel principal de cada integrante.
-
-## 2. Escolha do segmento
-
-Escolham um segmento relacionado à oferta ou gerenciamento de serviços.
-
-### Sugestões
-
-1. Barbearia ou salão de beleza;
-2. Clínica odontológica;
-3. Clínica veterinária ou Pet Shop;
-4. Oficina mecânica;
-5. Academia ou Personal Trainer;
-6. Escola de idiomas ou aulas particulares;
-7. Serviços de limpeza residencial;
-8. Assistência técnica de computadores ou celulares;
-9. Fotografia e eventos;
-10. Serviços de manutenção residencial.
-
-Outras propostas poderão ser utilizadas mediante validação do professor.
-
-## 3. Definição da solução
-
-A equipe deverá definir:
-
-- Nome da aplicação;
-- Segmento;
-- Problema que será resolvido;
-- Público-alvo;
-- Objetivo principal;
-- Funcionalidades iniciais previstas.
-
-## 4. Identidade Visual no Figma
-
-Criem um **Manual de Identidade Visual** contendo pelo menos:
-
-- Logo principal;
-- Versão reduzida/símbolo;
-- Paleta de cores com códigos HEX;
-- Tipografia para títulos e textos;
-- Aplicação em fundo claro e escuro;
-- Botão principal;
-- Botão secundário;
-- Campo de formulário;
-- Card;
-- Menu/Navbar;
-- Mensagens de sucesso e erro.
-
-O link do Figma deverá ser adicionado na seção **Links do Projeto** deste README.
-
-## 5. Gestão das tarefas
-
-Utilizem o board definido pelo professor para acompanhar o trabalho da equipe.
-
-O fluxo mínimo deverá possuir:
-
-```text
-Backlog → Doing → Done
-             ↓
-          Blocking
-```
-
-Cada tarefa deverá possuir, sempre que aplicável:
-
-- Título;
-- Descrição;
-- Responsável;
-- Critérios de aceite;
-- Prazo;
-- Checklist.
-
-## Entregáveis da Atividade 01
-
-- [ ] Nome da equipe definido;
-- [ ] Grupo com no máximo 4 integrantes;
-- [ ] Líderes definidos;
-- [ ] Segmento escolhido;
-- [ ] Nome da aplicação definido;
-- [ ] Problema e objetivo descritos;
-- [ ] Público-alvo definido;
-- [ ] Funcionalidades iniciais levantadas;
-- [ ] Manual de Identidade Visual criado no Figma;
-- [ ] Logo, cores e tipografia definidos;
-- [ ] Board de tarefas criado e organizado;
-- [ ] Links do Figma e board adicionados ao README.
-
----
-
-# ATIVIDADE 02 — Setup do Projeto, Git e GitHub
-
-## Objetivo
-
-Preparar o repositório que será utilizado durante todo o projeto, aplicando boas práticas de organização, versionamento, Issues, branches, Pull Requests, Code Review e documentação.
-
-## 1. Personalize este repositório
-
-Após realizar Fork e Clone, a equipe deverá substituir todos os exemplos e placeholders pelo conteúdo real do projeto.
-
-Comecem por:
-
-- Nome da aplicação;
-- Descrição;
-- Integrantes;
-- Responsabilidades;
-- Links do Figma e gerenciamento;
-- Estrutura necessária para o tema escolhido.
-
-## 2. Branches
-
-Não desenvolvam diretamente na `main`.
-
-Utilizem branches como:
-
-```text
-feature/login
-feature/home
-feature/admin-dashboard
-feature/cadastro-servicos
-fix/login-validation
-docs/update-readme
-style/identity
-```
-
-Padrão recomendado:
-
-```text
-tipo/nome-da-tarefa
-```
-
-## 3. Issues
-
-Este repositório já possui templates em:
-
-```text
-.github/ISSUE_TEMPLATE/
-```
-
-Templates disponíveis:
-
-- Feature;
-- Bug;
-- Task técnica;
-- Documentação.
-
-Antes de desenvolver uma funcionalidade relevante, crie uma Issue.
-
-Cada Issue deverá apresentar:
-
-- Contexto;
-- Objetivo;
-- Escopo;
-- Critérios de aceitação.
-
-## 4. Pull Requests
-
-O repositório possui um template em:
-
-```text
-.github/PULL_REQUEST_TEMPLATE.md
-```
-
-Toda alteração destinada à `main` deverá passar por Pull Request.
-
-O fluxo esperado é:
-
-```text
-Issue
-  ↓
-Branch
-  ↓
-Desenvolvimento
-  ↓
-Commit
-  ↓
-Push
-  ↓
-Pull Request
-  ↓
-Code Review
-  ↓
-Merge
-```
-
-O Pull Request deverá ser revisado por **outro integrante da equipe** sempre que possível.
-
-## 5. Commits
-
-Utilizem mensagens claras e objetivas, preferencialmente seguindo **Conventional Commits**.
-
-Exemplos:
-
-```bash
-git commit -m "feat: cria estrutura inicial da home"
-git commit -m "feat: adiciona formulário de login"
-git commit -m "fix: corrige validação do formulário"
-git commit -m "style: aplica identidade visual"
-git commit -m "docs: atualiza instruções do projeto"
-git commit -m "refactor: reorganiza conexão com banco"
-```
-
-Evitem:
-
-```text
-teste
-alteração
-ajustes
-final
-commit novo
-funcionando
-```
-
-## 6. Estrutura inicial
-
-A estrutura-base deste repositório é:
-
-```text
-.
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   ├── PULL_REQUEST_TEMPLATE.md
-│   └── CODEOWNERS
-│
+FixIT/
+├── .github/                 # Templates de Issues e Pull Requests
 ├── frontend/
-│   ├── index.php
-│   ├── pages/
-│   ├── components/
+│   ├── index.php            # Página inicial
+│   ├── pages/              # Telas; admin/ para a área administrativa
+│   ├── components/         # Partes compartilhadas das páginas
 │   ├── css/
 │   ├── js/
-│   └── assets/
-│
+│   └── assets/             # Logos, imagens e ícones
 ├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── models/
-│   └── services/
-│
+│   ├── config/             # Configuração local e exemplo de conexão PDO
+│   ├── controllers/        # Recebimento de requisições
+│   ├── models/             # Consultas ao banco
+│   └── services/           # Regras de negócio
 ├── database/
-│   ├── migrations/
-│   ├── seeds/
-│   └── database.sql
-│
+│   ├── database.sql        # SQL inicial; modelo FixIT ainda pendente
+│   ├── migrations/         # Alterações futuras no banco
+│   └── seeds/              # Dados de teste futuros
 ├── docs/
-├── readme_exemples/
-├── index.php
-├── .gitignore
+│   └── referencias/        # Material original do professor
+├── index.php               # Redireciona para frontend/
 └── README.md
 ```
 
-A equipe poderá evoluir essa arquitetura conforme o projeto avançar.
+Pastas com `.gitkeep` ainda estão vazias. A [arquitetura](docs/ARQUITETURA.md) explica onde colocar cada parte do código.
 
-## 7. Setup inicial do Front-end
+## Equipe
 
-A página inicial deverá utilizar:
+| Integrante | Responsabilidade |
+| --- | --- |
+| Alexandre Vieira Santana | Organização do projeto e testes |
+| David de Melo Ferreira | Backend PHP e regras de negócio |
+| Douglas Gomes dos Santos | Frontend e UX/UI |
+| Pedro Henrique Santiago Ferreira | Modelagem e banco de dados |
 
-- HTML;
-- CSS;
-- JavaScript quando necessário;
-- Bootstrap.
+Essa divisão indica a responsabilidade principal; todos participam do desenvolvimento e das revisões.
 
-O arquivo-base está em:
+## Links
 
-```text
-frontend/index.php
-```
+- [Telas no Figma](https://www.figma.com/design/cDIySt35PWPGPdHDbzdkR0/FixIT)
+- [Documentação do grupo no Notion](https://app.notion.com/p/FixIT-3c4e668ab69a80e8b30ace47a10c5cce)
+- [Modelagem no tldraw](https://www.tldraw.com/f/HfDG_NoWIqczhMU4bl14H) — página “FixIT • Banco de dados”
+- [Orientações da disciplina](https://deluxe-blue-bc1.notion.site/Projeto-Integrador-II-Aplica-o-Web-Din-mica-305dfca74d8d80ee9cf3dbbb08257c7c)
+- [Issues](https://github.com/senac-time-projetos/FixIT/issues) e [Pull Requests](https://github.com/senac-time-projetos/FixIT/pulls)
 
-A equipe deverá substituí-lo pela interface definida no Figma.
+O link de um board específico de tarefas ainda precisa ser informado pela equipe.
 
-## 8. Setup inicial do Back-end
+## Contribuição
 
-O back-end será desenvolvido com **PHP puro**.
+Use branches e Pull Requests para integrar alterações à `main`. Não versione credenciais ou dados pessoais. Veja [CONTRIBUTING.md](CONTRIBUTING.md).
 
-A estrutura inicial está em:
-
-```text
-backend/
-```
-
-Existe um arquivo de exemplo para configuração do banco:
-
-```text
-backend/config/database.example.php
-```
-
-Copie-o para:
-
-```text
-backend/config/database.php
-```
-
-O arquivo `database.php` está no `.gitignore` e não deve ser versionado com credenciais reais.
-
-## 9. Banco de Dados
-
-Utilizem **MySQL + phpMyAdmin**.
-
-O arquivo:
-
-```text
-database/database.sql
-```
-
-servirá como ponto inicial para versionar a estrutura do banco.
-
-O projeto final deverá possuir pelo menos **duas entidades relacionadas**.
-
-Exemplo:
-
-```text
-clientes 1 ─────── N agendamentos
-```
-
-A equipe deverá substituir esse exemplo pelo modelo do próprio projeto.
-
-## 10. Primeiro fluxo colaborativo
-
-Durante a Atividade 02, cada grupo deverá executar pelo menos uma vez:
-
-```text
-Criar Issue
-   ↓
-Criar Branch
-   ↓
-Alterar o projeto
-   ↓
-Criar Commit
-   ↓
-Realizar Push
-   ↓
-Abrir Pull Request
-   ↓
-Outro integrante revisar
-   ↓
-Realizar Merge
-```
-
-## Entregáveis da Atividade 02
-
-- [ ] Organization criada com o nome da equipe;
-- [ ] Repositório público dentro da Organization;
-- [ ] Professor convidado;
-- [ ] Todos os integrantes convidados;
-- [ ] Fork realizado;
-- [ ] Star realizada no repositório-base;
-- [ ] Clone realizado dentro do `htdocs` do XAMPP;
-- [ ] README personalizado;
-- [ ] Estrutura inicial organizada;
-- [ ] `.gitignore` configurado;
-- [ ] Templates de Issues disponíveis;
-- [ ] Template de Pull Request disponível;
-- [ ] Issues iniciais criadas;
-- [ ] Front-end inicial executando no XAMPP;
-- [ ] Bootstrap configurado;
-- [ ] Estrutura do back-end preparada;
-- [ ] Estrutura do banco preparada;
-- [ ] Pelo menos uma branch criada;
-- [ ] Pelo menos um Pull Request aberto;
-- [ ] Pelo menos um Code Review realizado;
-- [ ] Pelo menos um Merge realizado via Pull Request.
-
----
-
-# Requisitos obrigatórios do projeto final
-
-Independentemente do segmento escolhido, o projeto deverá implementar:
-
-## Autenticação
-
-- Tela de login;
-- Usuários armazenados no MySQL;
-- Senhas armazenadas de forma segura utilizando `password_hash()`;
-- Validação utilizando `password_verify()`;
-- Sessão PHP para manter autenticação.
-
-## Área administrativa
-
-A área administrativa deverá ser protegida e acessível apenas para usuários autorizados.
-
-Exemplo de rota/pasta:
-
-```text
-/frontend/pages/admin/
-```
-
-## Banco de dados
-
-- MySQL;
-- Gerenciamento via phpMyAdmin;
-- Pelo menos duas entidades relacionadas;
-- Chaves primárias;
-- Chaves estrangeiras quando aplicável.
-
-## CRUD
-
-Pelo menos uma entidade principal deverá possuir:
-
-- Create;
-- Read;
-- Update;
-- Delete.
-
-## Interface
-
-A aplicação deverá ser:
-
-- Funcional;
-- Navegável;
-- Organizada;
-- Consistente com o Figma;
-- Responsiva dentro do escopo definido pela equipe.
-
----
-
-# Links do Projeto
-
-> A equipe deverá atualizar esta seção.
-
-- 🎨 **Figma:** `INSERIR_LINK_FIGMA`
-- 📋 **Board de tarefas:** `INSERIR_LINK_BOARD`
-- 🐙 **GitHub Organization:** `INSERIR_LINK_ORGANIZATION`
-- 📦 **Repositório:** `INSERIR_LINK_REPOSITORIO`
-
----
-
-# Equipe
-
-> Substituam a tabela abaixo pelos integrantes reais.
-
-| Integrante | GitHub | Responsabilidade principal |
-|---|---|---|
-| Nome 01 | `@usuario` | Back-end Lead |
-| Nome 02 | `@usuario` | Front-end Lead |
-| Nome 03 | `@usuario` | Design Lead |
-| Nome 04 | `@usuario` | Project Management Lead |
-
----
-
-# Regras importantes
-
-- Não realizem desenvolvimento diretamente na `main`;
-- Não versionem senhas ou credenciais;
-- Não removam o histórico de commits da equipe;
-- Utilizem Issues para organizar implementações;
-- Utilizem Pull Requests para integrar mudanças;
-- Atualizem o README conforme o projeto evoluir;
-- Mantenham o repositório **público** durante a disciplina;
-- Todos os integrantes devem participar dos commits e revisões.
-
----
-
-# Primeiro teste
-
-Depois de clonar o projeto dentro do `htdocs`, acesse:
-
-```text
-http://localhost/NOME-DO-REPOSITORIO/
-```
-
-Se a página inicial do template aparecer, o ambiente básico está funcionando.
-
-A partir daqui, **o template deixa de ser do professor e passa a ser o projeto da equipe**. Personalizem a estrutura, a documentação e a aplicação para representar a solução definida na Atividade 01.
+Outras referências: [documentação](docs/README.md), [banco de dados](database/README.md) e [identidade visual](docs/IDENTIDADE_VISUAL.md).

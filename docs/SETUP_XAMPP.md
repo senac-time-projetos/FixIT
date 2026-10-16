@@ -1,61 +1,43 @@
-# Setup com XAMPP
+# Executando no XAMPP
 
-> Este documento orienta a execução local do projeto com Apache, PHP, MySQL e phpMyAdmin.
+Instale o XAMPP com Apache, PHP e MySQL/MariaDB. A conexão de exemplo usa `pdo_mysql`. O Bootstrap é carregado por CDN e depende de internet enquanto não houver uma cópia local.
 
-## Para que serve
+## Clonar
 
-Use este guia quando for configurar o ambiente local pela primeira vez ou quando outra pessoa da equipe precisar reproduzir a aplicação.
+No PowerShell:
 
-## 1. Instalação
-
-Instale o XAMPP e confirme que o **Apache** e o **MySQL** conseguem iniciar normalmente.
-
-## 2. Local do projeto
-
-No Windows, mantenha o repositório dentro de:
-
-```text
-C:\xampp\htdocs\
+```powershell
+cd C:\xampp\htdocs
+git clone https://github.com/senac-time-projetos/FixIT.git
+cd FixIT
+Copy-Item backend/config/database.example.php backend/config/database.php
 ```
 
-Exemplo:
+Se já tiver o repositório, entre na pasta existente. Só copie a configuração se `database.php` ainda não existir, para preservar os seus ajustes.
 
-```text
-C:\xampp\htdocs\agenda-facil\
-```
+## Banco
 
-## 3. Abrindo o projeto
+1. Inicie Apache e MySQL no XAMPP.
+2. Abra [phpMyAdmin](http://localhost/phpmyadmin).
+3. Na aba **Importar**, selecione `database/database.sql`.
+4. O script cria `projeto_integrador` e a tabela `users`.
+5. Em `backend/config/database.php`, ajuste host, porta, usuário e senha. O banco atual é `projeto_integrador`.
 
-Com Apache ativo:
+Não envie a configuração local ao GitHub. Ela está no .gitignore.
 
-```text
-http://localhost/agenda-facil/
-```
+O modelo do FixIT ainda precisa ser aplicado ao SQL. Não há contas de teste. Consulte [database/README.md](../database/README.md).
 
-## 4. phpMyAdmin
+## Abrir
 
-Com MySQL ativo:
+Acesse [localhost/FixIT](http://localhost/FixIT/). A raiz redireciona para a página inicial em frontend/.
 
-```text
-http://localhost/phpmyadmin
-```
+O login é uma tela provisória, sem autenticação ou conexão com o banco.
 
-Importe `database/database.sql` depois de personalizá-lo para o banco do projeto.
+## Conferência
 
-## 5. Configuração local do banco
+- A página inicial mostra FixIT.
+- Login abre e Voltar retorna à página inicial.
+- O banco aparece no phpMyAdmin depois da importação.
+- A configuração local não aparece em `git status --short`.
 
-Copie:
-
-```text
-backend/config/database.example.php
-```
-
-para:
-
-```text
-backend/config/database.php
-```
-
-Depois ajuste nome do banco, usuário e senha de acordo com o ambiente local.
-
-`database.php` não deverá ser enviado ao GitHub.
+Se o PHP aparecer como texto, abra a página pelo Apache, não por duplo clique no arquivo. Se a URL não existir, confira a pasta dentro de htdocs. Se o Apache usar outra porta, inclua-a na URL: `http://localhost:8080/FixIT/`.
