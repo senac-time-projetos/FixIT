@@ -52,9 +52,16 @@ Datas informadas na disciplina:
 
 Essas datas não comprovam envio ou aprovação. Confirmar a situação com o professor; não substituir por novos prazos sem acordo.
 
-O complemento de alta fidelidade preparado por Alexandre contém 12 telas principais, estados e três referências mobile, preservando os protótipos anteriores do grupo. Ainda faltam aplicação da logo, revisão mobile final, versões separadas de wireframes e validação real com pessoas. A conexão do Figma está limitada para novas edições; os dois cartões de edição estão em Blocking.
+O complemento de alta fidelidade preparado por Alexandre contém 12 telas principais, estados, exemplos de erro e três referências mobile, preservando os protótipos anteriores do grupo. A logo original foi aplicada às 25 telas e estados do MVP, os campos longos foram ajustados e a revisão visual e estrutural foi concluída. Os dois cartões de edição passaram para Done. A validação real com pessoas continua pendente.
 
-O manual original já estava marcado como concluído pelo grupo. A conferência final deve verificar versões da marca, fundos claro/escuro, cores, tipografia, botões, campos, cards, navegação e mensagens de sucesso/erro.
+Também foram organizadas sete telas de baixa fidelidade e sete de média fidelidade, com navegação própria. São versões da estrutura do MVP atual; não representam uma validação anterior.
+
+- [Baixa fidelidade](https://www.figma.com/design/cDIySt35PWPGPdHDbzdkR0/FixIT?node-id=86-610)
+- [Média fidelidade](https://www.figma.com/design/cDIySt35PWPGPdHDbzdkR0/FixIT?node-id=86-622)
+- [Alta fidelidade](https://www.figma.com/design/cDIySt35PWPGPdHDbzdkR0/FixIT?node-id=72-201)
+- [Manual visual complementado](https://www.figma.com/design/cDIySt35PWPGPdHDbzdkR0/FixIT?node-id=85-672)
+
+O manual original já estava marcado como concluído pelo grupo. O complemento visual reúne logo principal e símbolo, aplicação em fundos claro/escuro, cores, tipografia, botões, campos, card, navegação e mensagens de sucesso/erro. A aprovação dessas entregas pelo professor ainda precisa ser confirmada.
 
 ## Roteiros preparados
 
