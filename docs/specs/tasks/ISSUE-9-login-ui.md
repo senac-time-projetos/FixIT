@@ -1,6 +1,6 @@
 # ISSUE-9 — Desenvolver tela de Login conforme Figma
 
-Status: Bloqueada aguardando contexto de alta fidelidade do Figma
+Status: Implementada, aguardando revisão
 
 Issue: `#9`
 
@@ -91,12 +91,12 @@ com autenticação real, sem simular sessão ou credenciais válidas.
 
 ## Critérios de aceite
 
-- [ ] Tela normal corresponde ao frame `72:201`.
-- [ ] Estado inválido corresponde ao frame `87:791`.
-- [ ] Assets locais são os assets exatos do Figma.
-- [ ] Campos, validações e foco atendem aos contratos desta spec.
-- [ ] Layout funciona a partir de 320 px.
-- [ ] Não há autenticação fictícia ou senha exposta.
+- [x] Tela normal corresponde ao frame `72:201`.
+- [x] Estado inválido corresponde ao frame `87:791`.
+- [x] Assets locais são os assets exatos do Figma.
+- [x] Campos, validações e foco atendem aos contratos desta spec.
+- [x] Layout funciona a partir de 320 px.
+- [x] Não há autenticação fictícia ou senha exposta.
 - [ ] Verificações e capturas comparativas estão no PR.
 - [ ] Checklist do cartão Trello foi concluído com evidências.
 
@@ -114,7 +114,8 @@ com autenticação real, sem simular sessão ou credenciais válidas.
 
 - Em 9 de novembro de 2026, o escopo foi ampliado para todas as telas do MVP, mas
   cada conjunto será entregue em Issue e PR próprios.
-- O Figma MCP da conta proprietária atingiu o limite do plano Starter antes do
-  `get_design_context`. A segunda conta conectada possui apenas acesso de
-  visualização e não pôde iniciar uma sessão. A implementação permanece bloqueada
-  para preservar a fidelidade exigida.
+- O limite temporário do Figma foi resolvido em nova tentativa. Os contextos de
+  alta fidelidade e as capturas dos frames `72:201` e `87:791` foram obtidos antes
+  da implementação.
+- A comparação visual foi concluída em desktop e em viewport móvel de 390 px. A
+  cobertura automatizada valida também os contratos necessários para 320 px.
