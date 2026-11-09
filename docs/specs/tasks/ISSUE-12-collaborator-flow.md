@@ -1,6 +1,6 @@
 # ISSUE-12 — Implementar fluxo do colaborador conforme Figma
 
-Status: Implementada, aguardando revisão
+Status: Concluída
 
 Issue: `#12`
 
@@ -103,8 +103,8 @@ honestas: não criarão chamados nem comentários fictícios.
 - [x] Estado vazio e falha segura não apresentam dados ou sucesso fictícios.
 - [x] Contratos, validações, escape e foco possuem cobertura automatizada.
 - [x] Layout funciona a partir de 320 px e por teclado.
-- [ ] PR contém verificações e evidências comparativas.
-- [ ] Cartões Trello foram atualizados com Issue, PR e resultado.
+- [x] PR contém verificações e evidências comparativas.
+- [x] Cartões Trello foram atualizados com Issue, PR e resultado.
 
 ## Verificação e evidências
 
@@ -124,3 +124,6 @@ honestas: não criarão chamados nem comentários fictícios.
   projeto PHP simples.
 - Persistência, sessão, CSRF e autorização serão integrados nas Issues de backend;
   até lá, os POSTs falham de forma explícita e recuperável.
+- O cartão “Meus chamados” foi concluído. O cartão amplo “Desenvolver fluxo de
+  chamados” recebeu as evidências do frontend, mas permanece aberto porque exige
+  CRUD real em PHP/MySQL e testes de persistência, fora da Issue `#12`.
