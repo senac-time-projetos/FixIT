@@ -11,7 +11,13 @@ $headerActive = (string) ($headerActive ?? '');
 $isAuthenticated = $currentUserName !== '';
 $headerNavLabel = trim((string) ($headerNavLabel ?? 'Meus chamados'));
 $headerNavPath = (string) ($headerNavPath ?? '/pages/meus-chamados.php');
-$homeUrl = $isAuthenticated ? $assetBase . $headerNavPath : $assetBase . '/index.php';
+$headerNavItems = is_array($headerNavItems ?? null) ? $headerNavItems : [[
+    'key' => 'tickets',
+    'label' => $headerNavLabel,
+    'path' => $headerNavPath,
+]];
+$firstNavPath = (string) ($headerNavItems[0]['path'] ?? $headerNavPath);
+$homeUrl = $isAuthenticated ? $assetBase . $firstNavPath : $assetBase . '/index.php';
 ?>
 <header class="app-header<?= $isAuthenticated ? ' app-header--authenticated' : '' ?>">
     <a class="app-brand" href="<?= htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8') ?>" aria-label="FixIT — página inicial">
@@ -28,9 +34,11 @@ $homeUrl = $isAuthenticated ? $assetBase . $headerNavPath : $assetBase . '/index
     <p class="app-header__context">Suporte de TI</p>
     <?php if ($isAuthenticated): ?>
         <nav class="app-header__nav" aria-label="Navegação principal">
-            <a class="button button--primary<?= $headerActive === 'tickets' ? ' is-active' : '' ?>" href="<?= htmlspecialchars($assetBase . $headerNavPath, ENT_QUOTES, 'UTF-8') ?>">
-                <?= htmlspecialchars($headerNavLabel, ENT_QUOTES, 'UTF-8') ?>
-            </a>
+            <?php foreach ($headerNavItems as $item): ?>
+                <a class="button <?= $headerActive === ($item['key'] ?? '') ? 'button--primary is-active' : 'button--secondary' ?>" href="<?= htmlspecialchars($assetBase . (string) ($item['path'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+                    <?= htmlspecialchars((string) ($item['label'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+                </a>
+            <?php endforeach; ?>
         </nav>
         <div class="app-header__account">
             <span class="app-header__user"><?= htmlspecialchars($currentUserName, ENT_QUOTES, 'UTF-8') ?></span>
