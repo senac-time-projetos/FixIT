@@ -1,6 +1,6 @@
 # ISSUE-17 — Concluir telas administrativas conforme Figma
 
-Status: Em validação
+Status: Concluída
 
 Issue: `#17`
 
@@ -55,7 +55,7 @@ simulam persistência.
 - [x] Nenhum template inventa dados ou sucesso em produção.
 - [x] Estados vazio, inválido, servidor indisponível e permissão negada existem.
 - [x] Desktop, 390 px e 320 px foram verificados.
-- [ ] Testes e PR registram as evidências.
+- [x] Testes e PR registram as evidências.
 
 ## Verificação
 
@@ -69,3 +69,10 @@ simulam persistência.
 Os nove frames pertencem ao mesmo fluxo administrativo e compartilham cabeçalho,
 contratos e componentes. Eles formam uma única entrega vertical, assim como o
 fluxo técnico da Issue `#15`, sem incluir o backend persistente.
+
+## Evidências finais
+
+- PR integrado: `#18`.
+- Issue encerrada: `#17`.
+- Regressões de login, colaborador, técnico e administração aprovadas.
+- Comparação visual concluída em desktop, 390 px e 320 px.
