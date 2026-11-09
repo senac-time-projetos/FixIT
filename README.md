@@ -107,3 +107,7 @@ O [planejamento](docs/PLANEJAMENTO.md) reúne prioridades, histórias de usuári
 Use branches e Pull Requests para integrar alterações à `main`. Não versione credenciais ou dados pessoais. Veja [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Outras referências: [documentação](docs/README.md), [banco de dados](database/README.md) e [identidade visual](docs/IDENTIDADE_VISUAL.md).
+
+Para desenvolver uma tarefa, siga o [processo completo](docs/PROCESSO_DESENVOLVIMENTO.md)
+e as [especificações canônicas](docs/specs/README.md). Agentes e ferramentas de
+desenvolvimento devem respeitar as instruções em `AGENTS.md`.
