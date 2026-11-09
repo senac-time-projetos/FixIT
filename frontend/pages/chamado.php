@@ -10,8 +10,9 @@ $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $comment = '';
 $commentError = '';
 $serverError = '';
+$isClosed = $ticket !== null && ($ticket['status'] ?? '') === 'encerrado';
 
-if ($requestMethod === 'POST' && $ticket !== null) {
+if ($requestMethod === 'POST' && $ticket !== null && !$isClosed) {
     $comment = trim((string) ($_POST['comment'] ?? ''));
     $commentLength = mb_strlen($comment);
     if ($commentLength < 2 || $commentLength > 1000) {
@@ -49,19 +50,26 @@ $headerActive = 'tickets';
             <a class="button button--primary" href="<?= fixit_e($pageBase) ?>/meus-chamados.php"><span class="label-desktop">Voltar para meus chamados</span><span class="label-mobile">Voltar</span></a>
         <?php else: ?>
             <div class="page-heading">
-                <h1>Chamado #<?= fixit_e($ticket['number'] ?? '') ?></h1>
-                <p><?= $successMessage !== '' ? fixit_e($successMessage) : 'Acompanhe as atualizações por aqui.' ?></p>
+                <h1>Chamado #<?= fixit_e($ticket['number'] ?? '') ?><?= $isClosed ? ' encerrado' : '' ?></h1>
+                <p><?= $isClosed ? 'A solução permanece disponível para consulta no histórico.' : ($successMessage !== '' ? fixit_e($successMessage) : 'Acompanhe as atualizações por aqui.') ?></p>
             </div>
             <span class="status-badge status-badge--<?= fixit_e($ticket['status'] ?? 'indisponivel') ?>"><?= fixit_e(fixit_status_label((string) ($ticket['status'] ?? ''))) ?></span>
             <?php if ($successMessage !== ''): ?><p class="message message--success detail-success-mobile" role="status">Chamado aberto com sucesso.</p><?php endif; ?>
 
-            <section class="surface-card detail-card" aria-labelledby="ticket-title">
-                <h2 id="ticket-title"><?= fixit_e($ticket['title'] ?? '') ?></h2>
-                <p class="detail-card__meta"><?= fixit_e($ticket['category'] ?? '') ?> • Prioridade <?= mb_strtolower(fixit_e(fixit_priority_label((string) ($ticket['priority'] ?? ''))), 'UTF-8') ?> • Solicitante: <?= fixit_e($ticket['requester'] ?? '') ?></p>
-                <p><?= nl2br(fixit_e($ticket['description'] ?? '')) ?></p>
-                <p class="detail-card__assignee"><strong>Técnico responsável:</strong> <?= !empty($ticket['assignee']) ? fixit_e($ticket['assignee']) : 'aguardando atendimento' ?></p>
-                <?php if (!empty($ticket['solution'])): ?><p><strong>Solução:</strong> <?= nl2br(fixit_e($ticket['solution'])) ?></p><?php endif; ?>
-            </section>
+            <?php if ($isClosed): ?>
+                <section class="surface-card detail-card solution-card" aria-labelledby="ticket-title">
+                    <h2 id="ticket-title"><?= fixit_e($ticket['title'] ?? '') ?></h2>
+                    <p><?= nl2br(fixit_e($ticket['solution'] ?? 'Solução não informada.')) ?></p>
+                    <p class="detail-card__meta">Resolvido por <?= fixit_e($ticket['resolved_by'] ?? $ticket['assignee'] ?? '') ?><?= !empty($ticket['resolved_at']) ? ' • ' . fixit_e($ticket['resolved_at']) : '' ?></p>
+                </section>
+            <?php else: ?>
+                <section class="surface-card detail-card" aria-labelledby="ticket-title">
+                    <h2 id="ticket-title"><?= fixit_e($ticket['title'] ?? '') ?></h2>
+                    <p class="detail-card__meta"><?= fixit_e($ticket['category'] ?? '') ?> • Prioridade <?= mb_strtolower(fixit_e(fixit_priority_label((string) ($ticket['priority'] ?? ''))), 'UTF-8') ?> • Solicitante: <?= fixit_e($ticket['requester'] ?? '') ?></p>
+                    <p><?= nl2br(fixit_e($ticket['description'] ?? '')) ?></p>
+                    <p class="detail-card__assignee"><strong>Técnico responsável:</strong> <?= !empty($ticket['assignee']) ? fixit_e($ticket['assignee']) : 'aguardando atendimento' ?></p>
+                </section>
+            <?php endif; ?>
 
             <section class="surface-card history-card" aria-labelledby="history-title">
                 <h2 id="history-title" class="visually-hidden">Comentários e histórico</h2>
@@ -70,15 +78,17 @@ $headerActive = 'tickets';
                     <?php if (($ticket['history'] ?? []) === []): ?><p class="form-help">Ainda não há atualizações neste chamado.</p><?php endif; ?>
                 </div>
 
-                <?php if ($serverError !== ''): ?><p class="message message--error" role="alert"><?= fixit_e($serverError) ?></p><?php endif; ?>
-                <form method="post" action="<?= fixit_e($pageBase) ?>/chamado.php?id=<?= rawurlencode((string) ($ticket['id'] ?? '')) ?>" novalidate>
+                <?php if (!$isClosed): ?>
+                    <?php if ($serverError !== ''): ?><p class="message message--error" role="alert"><?= fixit_e($serverError) ?></p><?php endif; ?>
+                    <form method="post" action="<?= fixit_e($pageBase) ?>/chamado.php?id=<?= rawurlencode((string) ($ticket['id'] ?? '')) ?>" novalidate>
                     <div class="form-field">
                         <label for="comment">Adicionar comentário</label>
                         <textarea id="comment" name="comment" maxlength="1000" rows="4" placeholder="Informações adicionais sobre o problema"<?= $commentError !== '' ? ' aria-invalid="true" aria-describedby="comment-error" autofocus' : '' ?>><?= fixit_e($comment) ?></textarea>
                         <?php if ($commentError !== ''): ?><p class="form-field__error" id="comment-error"><?= fixit_e($commentError) ?></p><?php endif; ?>
                     </div>
                     <button class="button button--primary" type="submit">Enviar comentário</button>
-                </form>
+                    </form>
+                <?php endif; ?>
             </section>
 
             <a class="button button--secondary" href="<?= fixit_e($pageBase) ?>/meus-chamados.php"><span class="label-desktop">Voltar para meus chamados</span><span class="label-mobile">Voltar</span></a>
