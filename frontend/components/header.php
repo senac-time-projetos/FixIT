@@ -9,7 +9,9 @@ $assetBase = $assetBase ?? '..';
 $currentUserName = trim((string) ($currentUserName ?? ''));
 $headerActive = (string) ($headerActive ?? '');
 $isAuthenticated = $currentUserName !== '';
-$homeUrl = $isAuthenticated ? $assetBase . '/pages/meus-chamados.php' : $assetBase . '/index.php';
+$headerNavLabel = trim((string) ($headerNavLabel ?? 'Meus chamados'));
+$headerNavPath = (string) ($headerNavPath ?? '/pages/meus-chamados.php');
+$homeUrl = $isAuthenticated ? $assetBase . $headerNavPath : $assetBase . '/index.php';
 ?>
 <header class="app-header<?= $isAuthenticated ? ' app-header--authenticated' : '' ?>">
     <a class="app-brand" href="<?= htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8') ?>" aria-label="FixIT — página inicial">
@@ -26,8 +28,8 @@ $homeUrl = $isAuthenticated ? $assetBase . '/pages/meus-chamados.php' : $assetBa
     <p class="app-header__context">Suporte de TI</p>
     <?php if ($isAuthenticated): ?>
         <nav class="app-header__nav" aria-label="Navegação principal">
-            <a class="button button--primary<?= $headerActive === 'tickets' ? ' is-active' : '' ?>" href="<?= htmlspecialchars($assetBase . '/pages/meus-chamados.php', ENT_QUOTES, 'UTF-8') ?>">
-                Meus chamados
+            <a class="button button--primary<?= $headerActive === 'tickets' ? ' is-active' : '' ?>" href="<?= htmlspecialchars($assetBase . $headerNavPath, ENT_QUOTES, 'UTF-8') ?>">
+                <?= htmlspecialchars($headerNavLabel, ENT_QUOTES, 'UTF-8') ?>
             </a>
         </nav>
         <div class="app-header__account">

@@ -257,6 +257,10 @@ body {
     padding: 40px;
 }
 
+.app-content > * {
+    max-width: 100%;
+}
+
 .page-heading {
     display: flex;
     flex-direction: column;
@@ -317,6 +321,16 @@ body {
     height: 44px;
 }
 
+.filter-bar--technician {
+    grid-template-columns: minmax(260px, 1.4fr) repeat(3, minmax(140px, 0.55fr));
+}
+
+.filter-bar__actions {
+    display: flex;
+    grid-column: 1 / -1;
+    gap: 16px;
+}
+
 .ticket-table-wrap {
     width: min(100%, 1152px);
     overflow: hidden;
@@ -357,6 +371,28 @@ body {
 .ticket-table a:hover {
     color: var(--color-primary);
     text-decoration: underline;
+}
+
+.ticket-table--technician th:first-child {
+    width: 27%;
+}
+
+.ticket-table--technician th:last-child {
+    width: 14%;
+}
+
+.status-inline {
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-inline--em_atendimento {
+    color: #8a4b08;
+}
+
+.status-inline--encerrado {
+    color: #08734e;
 }
 
 .ticket-cards {
@@ -526,6 +562,38 @@ a.button {
     align-self: flex-start;
 }
 
+.service-card,
+.service-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+}
+
+.service-card h2,
+.service-card p,
+.history-summary {
+    margin: 0;
+}
+
+.service-form > .button {
+    align-self: flex-start;
+}
+
+.history-summary {
+    color: var(--color-text-secondary);
+}
+
+.technician-content--service {
+    gap: 16px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+}
+
+.solution-card > p:not(.detail-card__meta) {
+    font-size: 16px;
+}
+
 .detail-success-mobile {
     display: none;
 }
@@ -607,6 +675,51 @@ a.button {
         display: none;
     }
 
+    .filter-bar--technician .form-field,
+    .filter-bar--technician .form-field:nth-child(2),
+    .filter-bar--technician .filter-bar__actions {
+        display: flex;
+    }
+
+    .filter-bar--technician {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .filter-bar--technician .form-field,
+    .filter-bar--technician input,
+    .filter-bar--technician select,
+    .service-card,
+    .service-form,
+    .service-form .form-field,
+    .solution-card,
+    .solution-card + .history-card {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .service-card,
+    .solution-card,
+    .solution-card + .history-card {
+        overflow-wrap: anywhere;
+    }
+
+    .service-form .button {
+        max-width: 100%;
+        white-space: normal;
+        text-align: center;
+    }
+
+    .filter-bar--technician .filter-bar__actions {
+        flex-direction: column;
+    }
+
+    .filter-bar--technician .button {
+        width: 100%;
+    }
+
     .ticket-cards {
         display: flex;
         flex-direction: column;
@@ -676,6 +789,20 @@ a.button {
     .detail-card__meta,
     .history-card {
         display: none;
+    }
+
+    .service-card .detail-card__meta,
+    .solution-card .detail-card__meta,
+    .solution-card + .history-card {
+        display: flex;
+    }
+
+    .service-card,
+    .solution-card,
+    .solution-card + .history-card {
+        padding: 20px;
+        border: 1px solid var(--color-border);
+        background: var(--color-surface);
     }
 
     .detail-success-mobile {

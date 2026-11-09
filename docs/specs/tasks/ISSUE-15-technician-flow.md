@@ -1,6 +1,6 @@
 # ISSUE-15 — Implementar fluxo visual do técnico conforme Figma
 
-Status: Em implementação
+Status: Em validação
 
 Issue: `#15`
 
@@ -87,13 +87,13 @@ encerrado. Até a integração do backend, nenhuma ação será simulada como pe
 
 ## Critérios de aceite
 
-- [ ] Fila corresponde ao frame `72:432`.
-- [ ] Atribuição corresponde ao frame `72:515`.
-- [ ] Atendimento corresponde ao frame `72:555`.
-- [ ] Encerrado corresponde ao frame `72:613`.
-- [ ] Escritas não simulam persistência e validam os campos.
-- [ ] Estados vazio, sem permissão e erro são claros.
-- [ ] Desktop, 390 px, 320 px e teclado foram verificados.
+- [x] Fila corresponde ao frame `72:432`.
+- [x] Atribuição corresponde ao frame `72:515`.
+- [x] Atendimento corresponde ao frame `72:555`.
+- [x] Encerrado corresponde ao frame `72:613`.
+- [x] Escritas não simulam persistência e validam os campos.
+- [x] Estados vazio, sem permissão e erro são claros.
+- [x] Desktop, 390 px, 320 px e teclado foram verificados.
 - [ ] Testes, PR e Trello possuem evidências.
 
 ## Verificação e evidências
