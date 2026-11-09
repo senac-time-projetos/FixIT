@@ -83,10 +83,10 @@ Pastas com `.gitkeep` ainda estão vazias. A [arquitetura](docs/ARQUITETURA.md) 
 
 | Integrante | Responsabilidade |
 | --- | --- |
-| Alexandre Vieira Santana | Organização do projeto e testes |
+| Alexandre Vieira Santana | Organização, testes e complementos de modelagem e protótipo |
 | David de Melo Ferreira | Backend PHP e regras de negócio |
 | Douglas Gomes dos Santos | Frontend e UX/UI |
-| Pedro Henrique Santiago Ferreira | Modelagem e banco de dados |
+| Pedro Henrique Santiago Ferreira | Revisão do modelo e implementação do banco de dados |
 
 Essa divisão indica a responsabilidade principal; todos participam do desenvolvimento e das revisões.
 
@@ -98,10 +98,16 @@ Essa divisão indica a responsabilidade principal; todos participam do desenvolv
 - [Orientações da disciplina](https://deluxe-blue-bc1.notion.site/Projeto-Integrador-II-Aplica-o-Web-Din-mica-305dfca74d8d80ee9cf3dbbb08257c7c)
 - [Issues](https://github.com/senac-time-projetos/FixIT/issues) e [Pull Requests](https://github.com/senac-time-projetos/FixIT/pulls)
 
-O link de um board específico de tarefas ainda precisa ser informado pela equipe.
+- [Quadro de tarefas no Trello](https://trello.com/b/ihV3ZVG8/pi-senac-fixit)
+
+O [planejamento](docs/PLANEJAMENTO.md) reúne prioridades, histórias de usuário e a proposta da próxima sprint.
 
 ## Contribuição
 
 Use branches e Pull Requests para integrar alterações à `main`. Não versione credenciais ou dados pessoais. Veja [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Outras referências: [documentação](docs/README.md), [banco de dados](database/README.md) e [identidade visual](docs/IDENTIDADE_VISUAL.md).
+
+Para desenvolver uma tarefa, siga o [processo completo](docs/PROCESSO_DESENVOLVIMENTO.md)
+e as [especificações canônicas](docs/specs/README.md). Agentes e ferramentas de
+desenvolvimento devem respeitar as instruções em `AGENTS.md`.
