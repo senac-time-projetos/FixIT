@@ -1,6 +1,6 @@
 # ISSUE-12 — Implementar fluxo do colaborador conforme Figma
 
-Status: Em implementação
+Status: Implementada, aguardando revisão
 
 Issue: `#12`
 
@@ -97,12 +97,12 @@ honestas: não criarão chamados nem comentários fictícios.
 
 ## Critérios de aceite
 
-- [ ] Lista corresponde aos frames `72:244` e `75:829`.
-- [ ] Formulário corresponde aos frames `72:324`, `75:855` e `87:827`.
-- [ ] Detalhe corresponde aos frames `72:385` e `75:894`.
-- [ ] Estado vazio e falha segura não apresentam dados ou sucesso fictícios.
-- [ ] Contratos, validações, escape e foco possuem cobertura automatizada.
-- [ ] Layout funciona a partir de 320 px e por teclado.
+- [x] Lista corresponde aos frames `72:244` e `75:829`.
+- [x] Formulário corresponde aos frames `72:324`, `75:855` e `87:827`.
+- [x] Detalhe corresponde aos frames `72:385` e `75:894`.
+- [x] Estado vazio e falha segura não apresentam dados ou sucesso fictícios.
+- [x] Contratos, validações, escape e foco possuem cobertura automatizada.
+- [x] Layout funciona a partir de 320 px e por teclado.
 - [ ] PR contém verificações e evidências comparativas.
 - [ ] Cartões Trello foram atualizados com Issue, PR e resultado.
 
