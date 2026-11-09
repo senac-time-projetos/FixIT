@@ -1,6 +1,6 @@
 # ISSUE-9 — Desenvolver tela de Login conforme Figma
 
-Status: Implementada, aguardando revisão
+Status: Concluída
 
 Issue: `#9`
 
@@ -97,8 +97,8 @@ com autenticação real, sem simular sessão ou credenciais válidas.
 - [x] Campos, validações e foco atendem aos contratos desta spec.
 - [x] Layout funciona a partir de 320 px.
 - [x] Não há autenticação fictícia ou senha exposta.
-- [ ] Verificações e capturas comparativas estão no PR.
-- [ ] Checklist do cartão Trello foi concluído com evidências.
+- [x] Verificações e capturas comparativas estão no PR.
+- [x] Checklist do cartão Trello foi concluído com evidências.
 
 ## Verificação e evidências
 
