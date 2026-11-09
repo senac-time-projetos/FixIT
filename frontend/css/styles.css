@@ -466,22 +466,37 @@ a.button {
 .status-badge {
     display: inline-flex;
     align-items: center;
-    width: 150px;
-    min-height: 34px;
-    padding: 8px;
-    border-radius: 6px;
+    gap: 7px;
+    width: fit-content;
+    min-height: 28px;
+    padding: 5px 10px;
+    border: 1px solid #cfe0ff;
+    border-radius: 999px;
     background: #eaf1ff;
     color: var(--color-primary);
     font-size: 12px;
     font-weight: 600;
+    line-height: 1.25;
+    box-shadow: 0 1px 2px rgb(8 21 41 / 6%);
+}
+
+.status-badge::before {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+    flex: 0 0 auto;
 }
 
 .status-badge--em_atendimento {
+    border-color: #f6dcae;
     background: #fff4df;
     color: #8a4b08;
 }
 
 .status-badge--encerrado {
+    border-color: #bfe8d4;
     background: #e8f7f0;
     color: #08734e;
 }
