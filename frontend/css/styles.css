@@ -83,6 +83,7 @@ body {
     height: 190px;
     max-width: none;
     object-fit: cover;
+    mix-blend-mode: multiply;
 }
 
 .app-header__context {
