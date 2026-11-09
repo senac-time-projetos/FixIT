@@ -1,6 +1,6 @@
 # ISSUE-7 — Estruturar specs e instruções dos agentes
 
-Status: Em verificação
+Status: Aprovada para integração
 
 Issue: `#7`
 
@@ -60,7 +60,7 @@ planejamento é preservado pelos commits originais incorporados.
 - [x] O processo completo da tarefa está documentado.
 - [x] O planejamento pendente foi incorporado à branch.
 - [x] Validações foram executadas e serão registradas no PR.
-- [ ] PR foi revisado e integrado à `main`.
+- [x] PR foi revisado e autorizado para integração pelo responsável do projeto.
 
 ## Verificação e evidências
 
@@ -74,5 +74,7 @@ planejamento é preservado pelos commits originais incorporados.
 
 - Em 9 de novembro de 2026, foi decidido que specs e instruções de agentes não
   precisam de cartão no Trello.
+- Em 9 de novembro de 2026, o responsável do projeto autorizou a integração
+  imediata do PR #8 devido à urgência, dispensando a espera pela revisão externa.
 - O resultado detalhado da validação do DER ainda precisa ser registrado em fonte
   versionada, apesar de o cartão correspondente estar em `Done`.
