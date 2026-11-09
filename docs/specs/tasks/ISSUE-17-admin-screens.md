@@ -1,6 +1,6 @@
 # ISSUE-17 — Concluir telas administrativas conforme Figma
 
-Status: Em implementação
+Status: Em validação
 
 Issue: `#17`
 
@@ -48,13 +48,13 @@ simulam persistência.
 
 ## Critérios de aceite
 
-- [ ] Resumo corresponde ao frame `72:647`.
-- [ ] Usuários e estados correspondem a `72:711`, `75:432` e `75:567`.
-- [ ] Cadastro/edição correspondem a `72:781` e `75:490`.
-- [ ] Categorias e estados correspondem a `72:864`, `75:625` e `75:686`.
-- [ ] Nenhum template inventa dados ou sucesso em produção.
-- [ ] Estados vazio, inválido, servidor indisponível e permissão negada existem.
-- [ ] Desktop, 390 px e 320 px foram verificados.
+- [x] Resumo corresponde ao frame `72:647`.
+- [x] Usuários e estados correspondem a `72:711`, `75:432` e `75:567`.
+- [x] Cadastro/edição correspondem a `72:781` e `75:490`.
+- [x] Categorias e estados correspondem a `72:864`, `75:625` e `75:686`.
+- [x] Nenhum template inventa dados ou sucesso em produção.
+- [x] Estados vazio, inválido, servidor indisponível e permissão negada existem.
+- [x] Desktop, 390 px e 320 px foram verificados.
 - [ ] Testes e PR registram as evidências.
 
 ## Verificação
