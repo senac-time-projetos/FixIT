@@ -1,6 +1,6 @@
 # ISSUE-26 — Implementar regras transacionais de chamados
 
-Status: Em revisão
+Status: Concluída
 
 Issue: `#26`
 
@@ -52,6 +52,8 @@ coordenar atualizações de várias tabelas.
 
 ## Evidências
 
+- Implementação revisada e integrada pelo PR `#27`.
+- Issue `#26` encerrada automaticamente após o merge.
 - `tests/ticket_service_test.php`: cobre operações válidas, recusas por perfil,
   disputa de atribuição e rollback provocado por falha no histórico.
 - Suítes de autenticação, persistência e telas executadas sem regressão.
