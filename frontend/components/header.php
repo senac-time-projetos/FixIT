@@ -18,6 +18,7 @@ $headerNavItems = is_array($headerNavItems ?? null) ? $headerNavItems : [[
 ]];
 $firstNavPath = (string) ($headerNavItems[0]['path'] ?? $headerNavPath);
 $homeUrl = $isAuthenticated ? $assetBase . $firstNavPath : $assetBase . '/index.php';
+$logoutCsrfToken = (string) ($logoutCsrfToken ?? '');
 ?>
 <header class="app-header<?= $isAuthenticated ? ' app-header--authenticated' : '' ?>">
     <a class="app-brand" href="<?= htmlspecialchars($homeUrl, ENT_QUOTES, 'UTF-8') ?>" aria-label="FixIT — página inicial">
@@ -42,7 +43,10 @@ $homeUrl = $isAuthenticated ? $assetBase . $firstNavPath : $assetBase . '/index.
         </nav>
         <div class="app-header__account">
             <span class="app-header__user"><?= htmlspecialchars($currentUserName, ENT_QUOTES, 'UTF-8') ?></span>
-            <a class="button button--primary" href="<?= htmlspecialchars($assetBase . '/pages/login.php', ENT_QUOTES, 'UTF-8') ?>">Sair</a>
+            <form class="app-header__logout" method="post" action="<?= htmlspecialchars($assetBase . '/pages/logout.php', ENT_QUOTES, 'UTF-8') ?>">
+                <input type="hidden" name="_csrf" value="<?= htmlspecialchars($logoutCsrfToken, ENT_QUOTES, 'UTF-8') ?>">
+                <button class="button button--primary" type="submit">Sair</button>
+            </form>
         </div>
     <?php endif; ?>
 </header>

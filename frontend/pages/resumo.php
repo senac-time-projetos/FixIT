@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../components/view_helpers.php';
+$allowedRoles = ['administrador'];
+require __DIR__ . '/../components/session_context.php';
 require __DIR__ . '/../components/admin_context.php';
 
 $tickets = is_array($tickets ?? null) ? $tickets : [];

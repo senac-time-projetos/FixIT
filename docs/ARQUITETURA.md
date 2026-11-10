@@ -27,6 +27,11 @@ ainda usam contratos de dados e serão ligadas aos controllers em outra etapa.
 `backend/bootstrap.php` entrega a conexão e os cinco repositórios em um único
 array para controllers e services, evitando instanciação e conexão duplicadas.
 
+`backend/security/` concentra sessão, CSRF e autorização; `AuthService` valida
+credenciais e mantém na sessão somente os dados mínimos do usuário. As páginas
+autenticadas carregam `frontend/components/session_context.php`, que nega acesso
+por padrão e prepara navegação e logout conforme o perfil.
+
 ## Fluxo previsto
 
 ```text

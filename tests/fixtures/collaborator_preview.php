@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 $screen = (string) ($_GET['screen'] ?? 'list');
+$skipAuth = true;
 $assetBase = '/frontend';
 $pageBase = '/frontend/pages';
 $currentUserName = 'Mariana Oliveira';

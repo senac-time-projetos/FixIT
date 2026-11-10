@@ -1,4 +1,25 @@
 <?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../../backend/security/Csrf.php';
+require_once __DIR__ . '/../../backend/security/NativeSession.php';
+require_once __DIR__ . '/../../backend/services/AuthService.php';
+
+use FixIT\Security\Csrf;
+use FixIT\Security\NativeSession;
+use FixIT\Services\AuthService;
+
+NativeSession::start();
+$session =& $_SESSION;
+$csrf = new Csrf($session);
+$csrfToken = $csrf->token();
+$isCli = PHP_SAPI === 'cli';
+$existingUser = is_array($session['auth_user'] ?? null) ? $session['auth_user'] : null;
+if ($existingUser !== null && !$isCli) {
+    header('Location: ' . AuthService::destination($existingUser));
+    exit;
+}
+
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $email = '';
 $errors = [];
@@ -18,10 +39,25 @@ if ($requestMethod === 'POST') {
         $errors['password'] = 'Informe sua senha.';
     }
 
-    // A autenticação real pertence à Issue de backend. Até a integração, um POST
-    // válido demonstra somente o estado de credenciais inválidas definido no Figma.
     if ($errors === []) {
-        $authError = true;
+        if (!$csrf->validate((string) ($_POST['_csrf'] ?? ''))) {
+            $authError = true;
+        } else {
+            try {
+                $services = require __DIR__ . '/../../backend/bootstrap.php';
+                $auth = new AuthService($services['users'], $session, [NativeSession::class, 'regenerate']);
+                $user = $auth->login($email, $password);
+                if ($user === null) {
+                    $authError = true;
+                } elseif (!$isCli) {
+                    $csrf->rotate();
+                    header('Location: ' . AuthService::destination($user));
+                    exit;
+                }
+            } catch (Throwable) {
+                $authError = true;
+            }
+        }
     }
 }
 
@@ -55,6 +91,7 @@ $assetBase = '..';
         </p>
 
         <form class="login-card" method="post" action="login.php" novalidate>
+            <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
             <div class="form-field">
                 <label for="email">E-mail</label>
                 <input
