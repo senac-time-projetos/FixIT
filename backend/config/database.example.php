@@ -7,11 +7,17 @@
  * 3. NÃO versione database.php com credenciais reais.
  */
 
+$env = static function (string $key, string $default): string {
+    $value = getenv($key);
+    return $value === false || $value === '' ? $default : $value;
+};
+
 return [
-    'host' => 'localhost',
-    'port' => '3306',
-    'database' => 'projeto_integrador',
-    'username' => 'root',
-    'password' => '',
+    'driver' => 'mysql',
+    'host' => $env('FIXIT_DB_HOST', '127.0.0.1'),
+    'port' => $env('FIXIT_DB_PORT', '3306'),
+    'database' => $env('FIXIT_DB_NAME', 'projeto_integrador'),
+    'username' => $env('FIXIT_DB_USER', 'root'),
+    'password' => $env('FIXIT_DB_PASSWORD', ''),
     'charset' => 'utf8mb4',
 ];

@@ -1,31 +1,61 @@
-# Banco de dados
+# Banco de dados do FixIT
 
-## Estado atual
+## Modelo implementado
 
-`database.sql` veio do template. Cria o banco `projeto_integrador` e a tabela `users`, sem dados de teste. O nome do banco é o mesmo de `backend/config/database.example.php`.
+`database.sql` cria uma instalação limpa em MySQL/MariaDB com `utf8mb4`, InnoDB,
+chaves estrangeiras, restrições e índices.
 
-Importar o script prepara a base inicial, mas não habilita o login.
-
-## Modelo planejado
-
-O [diagrama no tldraw](https://www.tldraw.com/f/HfDG_NoWIqczhMU4bl14H), na página “FixIT • Banco de dados”, prevê:
-
-| Tabela | Conteúdo |
+| Tabela | Responsabilidade |
 | --- | --- |
-| `usuarios` | Nome, e-mail, hash da senha, perfil e situação |
-| `categorias` | Classificação dos problemas e situação |
+| `usuarios` | Identidade, hash de senha, perfil e situação |
+| `categorias` | Classificação ativa/inativa dos chamados |
 | `chamados` | Solicitação, prioridade, status, técnico e solução |
-| `comentarios` | Mensagens vinculadas ao chamado e ao autor |
-| `historico_chamados` | Registro de abertura e alterações |
+| `comentarios` | Mensagens com chamado, autor e data |
+| `historico_chamados` | Eventos imutáveis do ciclo de atendimento |
 
-Solicitante e técnico referenciam usuarios; cada chamado tem uma categoria. Comentários e histórico referenciam um chamado e um usuário.
+O número auto incremental de `chamados` é o identificador público apresentado na
+interface. Usuários e categorias são inativados; não são apagados.
 
-**O modelo ainda precisa ser implementado no SQL.** A tabela users do template será substituída em uma tarefa própria, após conferir se há dados locais a preservar.
+## Instalação limpa
 
-## Arquivos
+No phpMyAdmin, importe `database/database.sql`. Pela linha de comando, a partir da
+raiz do repositório:
 
-- `database.sql`: estrutura para instalação nova.
-- `migrations/`: alterações futuras em bancos existentes.
-- `seeds/`: dados fictícios de teste; ainda não há seeds.
+```powershell
+C:\xampp\mysql\bin\mysql.exe -u root < database\database.sql
+```
 
-Versione mudanças de esquema junto com o código que depende delas. Não envie dados pessoais ou senhas em texto puro. Use `password_hash()` e `password_verify()` no PHP.
+Se o usuário tiver senha, use `-p` e informe-a no prompt. Não coloque a senha no
+comando, no histórico ou no repositório.
+
+## Base que já importou o template
+
+Faça backup e execute no cliente `mysql`:
+
+```powershell
+C:\xampp\mysql\bin\mysql.exe -u root < database\migrations\001_create_fixit_schema.sql
+```
+
+A migration cria o modelo FixIT e preserva a tabela genérica `users`. Ela não
+copia essa tabela porque não existe um contrato confiável para perfil e situação.
+Revise os dados antes de planejar sua remoção em outra migration.
+
+## Dados fictícios opcionais
+
+Depois do esquema, importe `database/seeds/demo.sql`. As contas usam endereços
+`.test` e hashes bcrypt; nenhum hash deve ser substituído por senha em texto puro.
+
+| Perfil | E-mail | Senha local de demonstração |
+| --- | --- | --- |
+| Colaborador | `mariana@fixit.test` | `FixIT@Colab2026` |
+| Técnico | `douglas@fixit.test` | `FixIT@Tecnico2026` |
+| Administrador | `admin@fixit.test` | `FixIT@Admin2026` |
+
+Essas credenciais são exclusivamente fictícias. Altere ou remova as contas antes
+de qualquer ambiente compartilhado.
+
+## Recuperação
+
+Antes de migration, exporte o banco no phpMyAdmin ou com `mysqldump`. Em falha,
+restaure o backup. Não use `DROP TABLE` em uma base com chamados, comentários ou
+histórico sem uma migration revisada e um plano explícito de preservação.

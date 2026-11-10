@@ -1,6 +1,6 @@
 # ISSUE-20 — Criar esquema MySQL e camada de persistência PDO
 
-Status: Em implementação
+Status: Em validação
 
 Issue: `#20`
 
@@ -66,9 +66,8 @@ histórico é append-only na camada pública.
 - E-mail e nomes de categoria únicos.
 - Índices para solicitante/status/data, técnico/status, categoria/status,
   prioridade/status e relacionamentos de comentários/histórico.
-- Chaves estrangeiras usam `RESTRICT` para cadastros e `CASCADE` somente nos
-  filhos que não podem existir sem o chamado; a aplicação não expõe exclusão de
-  chamados.
+- Chaves estrangeiras usam `RESTRICT` para impedir que cadastros ou chamados com
+  histórico sejam removidos; `CASCADE` é limitado à atualização de chaves.
 
 ## Contratos da persistência
 
@@ -93,14 +92,14 @@ histórico é append-only na camada pública.
 
 ## Critérios de aceite
 
-- [ ] Instalação limpa cria as cinco tabelas e relações.
-- [ ] Migration preserva a tabela legada e cria o modelo FixIT.
-- [ ] Seed não contém senha em texto puro nem dados reais.
-- [ ] Conexão PDO é centralizada e configurável sem credencial versionada.
-- [ ] Cinco repositórios usam consultas preparadas.
-- [ ] Testes cobrem conexão, CRUD base, filtros e histórico append-only.
-- [ ] Documentação XAMPP descreve instalação e seed.
-- [ ] Lint, testes e `git diff --check` passam.
+- [x] Instalação limpa define as cinco tabelas e relações.
+- [x] Migration preserva a tabela legada e cria o modelo FixIT.
+- [x] Seed não contém senha em texto puro nem dados reais.
+- [x] Conexão PDO é centralizada e configurável sem credencial versionada.
+- [x] Cinco repositórios usam consultas preparadas.
+- [x] Testes cobrem conexão, CRUD base, filtros e histórico append-only.
+- [x] Documentação XAMPP descreve instalação e seed.
+- [x] Lint, testes e `git diff --check` passam.
 
 ## Verificação
 
@@ -108,3 +107,14 @@ histórico é append-only na camada pública.
 - `php -l` nos PHP alterados.
 - inspeção de segredos e senhas em texto puro.
 - importação manual no MySQL/XAMPP quando o serviço estiver disponível.
+
+## Evidências observadas
+
+- `tests/database_foundation_test.php`: conexão SQLite isolada, chaves
+  estrangeiras, CRUD base, filtros, atribuição, comentário, encerramento,
+  histórico, resumo, commit e rollback aprovados.
+- Os hashes bcrypt do seed foram conferidos com as três senhas fictícias
+  documentadas.
+- O cliente do XAMPP foi localizado, porém o servidor MySQL local estava parado;
+  por isso a importação real permanece como passo reproduzível da documentação e
+  não foi declarada como executada.
