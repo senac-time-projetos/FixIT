@@ -22,7 +22,9 @@ O `index.php` da raiz redireciona para `frontend/index.php`. A página inicial a
 
 `database.example.php` define os parâmetros locais, `PdoConnection.php` cria a conexão
 e controla transações e `connection.php` é o bootstrap compartilhado. As páginas
-ainda usam contratos de dados e serão ligadas aos controllers em outra etapa.
+mantêm contratos de apresentação estáveis e são ligadas aos controllers por fluxo.
+O `compose.yaml` oferece MySQL 8.4 isolado em `127.0.0.1:3307`, inicializado pelo
+mesmo schema e seed usados na instalação manual, sem depender do MySQL do XAMPP.
 
 `backend/bootstrap.php` entrega a conexão, os cinco repositórios e o
 `TicketService` em um único array, evitando instanciação e conexão duplicadas.

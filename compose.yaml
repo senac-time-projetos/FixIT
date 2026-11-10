@@ -1,0 +1,29 @@
+name: fixit
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: projeto_integrador
+      TZ: America/Sao_Paulo
+    ports:
+      - "127.0.0.1:${FIXIT_DB_DOCKER_PORT:-3307}:3306"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - fixit_mysql_data:/var/lib/mysql
+      - ./database/database.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seeds/demo.sql:/docker-entrypoint-initdb.d/02-demo.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "--silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+
+volumes:
+  fixit_mysql_data:
+    name: fixit_mysql_data

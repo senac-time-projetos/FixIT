@@ -6,16 +6,16 @@ O colaborador registra um problema e acompanha o atendimento. O técnico organiz
 
 ## Situação atual
 
-O projeto está na fase de estruturação. Existem uma página inicial em PHP, uma tela provisória de login, Bootstrap e exemplos de configuração do banco. **Autenticação, permissões e CRUD ainda não estão implementados.**
-
-O SQL atual veio do template: cria o banco `projeto_integrador` e a tabela `users`. As cinco tabelas do modelo do FixIT ainda precisam ser implementadas.
+As telas do MVP, autenticação, permissões, schema, repositórios, regras
+transacionais e o fluxo persistido do colaborador estão implementados. Os fluxos
+persistidos do técnico e da administração continuam nas próximas entregas.
 
 ## Tecnologias
 
 - HTML, CSS, JavaScript e Bootstrap na interface.
 - PHP puro, com organização MVC simplificada.
 - MySQL e PDO para acesso aos dados.
-- XAMPP e phpMyAdmin no ambiente local.
+- XAMPP para Apache/PHP e MySQL via XAMPP ou Docker no ambiente local.
 - Git e GitHub para versionamento; Figma para as telas.
 
 ## Primeira versão
@@ -32,7 +32,8 @@ Inventário, SLA, inteligência artificial e integrações ficam fora da primeir
 
 ## Como executar
 
-1. Inicie Apache e MySQL no XAMPP.
+1. Inicie o Apache no XAMPP. Para o banco, use o MySQL do XAMPP ou o ambiente
+   Docker documentado abaixo.
 2. Clone dentro de `htdocs`:
 
    ```powershell
@@ -46,9 +47,13 @@ Inventário, SLA, inteligência artificial e integrações ficam fora da primeir
 4. Ajuste usuário, senha e porta em `backend/config/database.php`. O nome do banco atual é `projeto_integrador`. Não envie esse arquivo ao GitHub.
 5. Acesse [localhost/FixIT](http://localhost/FixIT/).
 
-Se já tiver uma configuração local, preserve-a em vez de copiar o exemplo novamente. A página inicial confirma que o PHP executa; o login é provisório e não consulta o banco. Não há conta de teste nesta etapa.
+Se já tiver uma configuração local, preserve-a em vez de copiar o exemplo novamente.
 
 Instruções completas: [configuração do XAMPP](docs/SETUP_XAMPP.md).
+
+Se o MySQL do XAMPP não estiver disponível, siga o
+[ambiente MySQL com Docker](docs/SETUP_DOCKER.md). Ele usa a porta `3307` e não
+altera os dados do XAMPP.
 
 ## Estrutura
 
@@ -68,9 +73,9 @@ FixIT/
 │   ├── models/             # Consultas ao banco
 │   └── services/           # Regras de negócio
 ├── database/
-│   ├── database.sql        # SQL inicial; modelo FixIT ainda pendente
+│   ├── database.sql        # Instalação limpa das cinco tabelas do FixIT
 │   ├── migrations/         # Alterações futuras no banco
-│   └── seeds/              # Dados de teste futuros
+│   └── seeds/              # Dados fictícios de demonstração
 ├── docs/
 │   └── referencias/        # Material original do professor
 ├── index.php               # Redireciona para frontend/
