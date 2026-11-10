@@ -1,6 +1,6 @@
 # ISSUE-20 — Criar esquema MySQL e camada de persistência PDO
 
-Status: Em validação
+Status: Concluída
 
 Issue: `#20`
 
@@ -118,3 +118,4 @@ histórico é append-only na camada pública.
 - O cliente do XAMPP foi localizado, porém o servidor MySQL local estava parado;
   por isso a importação real permanece como passo reproduzível da documentação e
   não foi declarada como executada.
+- PR integrado: `#21`; Issue encerrada: `#20`.
