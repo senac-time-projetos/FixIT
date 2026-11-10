@@ -35,8 +35,9 @@ Se o template antigo já foi importado, faça backup e siga a migration descrita
 
 Acesse [localhost/FixIT](http://localhost/FixIT/). A raiz redireciona para a página inicial em frontend/.
 
-As telas ainda não iniciam sessão automaticamente; a conexão e os repositórios
-estão prontos para a próxima etapa de controllers e autenticação.
+Após importar o schema e o seed, o login valida as contas fictícias, inicia a
+sessão e direciona cada perfil à sua área. Logout usa POST e token CSRF. As telas
+autenticadas bloqueiam acesso sem sessão ou com perfil inadequado.
 
 ## Conferência
 

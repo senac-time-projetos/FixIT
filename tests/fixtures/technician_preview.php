@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 $screen = (string) ($_GET['screen'] ?? 'queue');
+$skipAuth = true;
 $assetBase = '/frontend';
 $pageBase = '/frontend/pages';
 $currentUserName = $screen === 'closed' ? 'Mariana Oliveira' : 'Douglas Gomes';

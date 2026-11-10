@@ -1,6 +1,6 @@
 # ISSUE-23 — Integrar autenticação, sessão e permissões
 
-Status: Em implementação
+Status: Em validação
 
 Issue: `#23`
 
@@ -46,13 +46,13 @@ sessões ausentes e perfis sem permissão são rejeitados sem vazamento de dados
 
 ## Critérios de aceite
 
-- [ ] Login válido cria sessão sem hash ou senha.
-- [ ] Senha inválida e conta inativa são rejeitadas genericamente.
-- [ ] Logout remove sessão e exige CSRF.
-- [ ] Guardas negam sessão ausente e perfil inadequado.
-- [ ] Tela de login mantém o Figma e integra o backend.
-- [ ] Testes cobrem três perfis, CSRF, sessão e redirecionamentos.
-- [ ] Regressões visuais continuam aprovadas.
+- [x] Login válido cria sessão sem hash ou senha.
+- [x] Senha inválida e conta inativa são rejeitadas genericamente.
+- [x] Logout remove sessão e exige CSRF.
+- [x] Guardas negam sessão ausente e perfil inadequado.
+- [x] Tela de login mantém o Figma e integra o backend.
+- [x] Testes cobrem três perfis, CSRF, sessão e redirecionamentos.
+- [x] Regressões visuais continuam aprovadas.
 
 ## Segurança e recuperação
 
@@ -66,3 +66,11 @@ sessões ausentes e perfis sem permissão são rejeitados sem vazamento de dados
 Em 9 de novembro de 2026, o MariaDB 10.4 do XAMPP falhou ao iniciar por corrupção
 InnoDB preexistente (`Missing MLOG_CHECKPOINT`). Nenhuma tentativa destrutiva de
 reparo foi executada. Os testes desta Issue usam SQLite em memória.
+
+## Evidências observadas
+
+- `tests/auth_session_test.php`: três destinos por perfil, credencial inválida,
+  conta inativa, sessão sanitizada, regeneração, logout, CSRF e autorização.
+- `tests/login_page_test.php`: formulário, acessibilidade, CSRF e mensagem
+  genérica preservados.
+- Todas as suítes anteriores continuaram aprovadas.

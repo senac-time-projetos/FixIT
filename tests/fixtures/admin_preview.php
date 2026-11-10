@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 $screen = (string) ($_GET['screen'] ?? 'summary');
+$skipAuth = true;
 $assetBase = '/frontend';
 $pageBase = '/frontend/pages';
 $currentUserName = 'Administrador';

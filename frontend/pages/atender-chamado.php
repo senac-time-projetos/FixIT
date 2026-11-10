@@ -2,9 +2,11 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../components/view_helpers.php';
+$allowedRoles = ['tecnico'];
+require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Técnico'));
-$currentTechnicianId = $currentTechnicianId ?? null;
+$currentTechnicianId = $currentTechnicianId ?? $currentUserId ?? null;
 $ticket = is_array($ticket ?? null) ? $ticket : null;
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $action = (string) ($_POST['action'] ?? '');

@@ -110,6 +110,10 @@ body {
     white-space: nowrap;
 }
 
+.app-header__logout {
+    margin: 0;
+}
+
 .login-content {
     display: flex;
     flex-direction: column;

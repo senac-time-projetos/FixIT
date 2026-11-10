@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../components/view_helpers.php';
+$allowedRoles = ['colaborador', 'tecnico'];
+require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Colaborador'));
 $tickets = is_array($tickets ?? null) ? $tickets : [];
