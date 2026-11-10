@@ -1,6 +1,6 @@
 # ISSUE-29 — Integrar fluxo real do colaborador aos chamados
 
-Status: Em revisão
+Status: Concluída
 
 Issue: `#29`
 
@@ -69,6 +69,8 @@ preservados; dados de outro solicitante continuarão indisponíveis.
 
 ## Evidências
 
+- Implementação revisada e integrada pelo PR `#30`.
+- Issue `#29` encerrada automaticamente após o merge.
 - `tests/collaborator_ticket_controller_test.php` comprova isolamento por
   solicitante, categorias ativas, abertura, detalhe, comentário e recusa após
   encerramento.
