@@ -1,6 +1,6 @@
 # ISSUE-29 — Integrar fluxo real do colaborador aos chamados
 
-Status: Especificada
+Status: Em revisão
 
 Issue: `#29`
 
@@ -17,7 +17,7 @@ preservados; dados de outro solicitante continuarão indisponíveis.
 ### Lista
 
 - Carregar somente chamados cujo `solicitante_id` seja o usuário da sessão.
-- Aplicar busca e status no repositório, com limites já definidos.
+- Aplicar busca e status somente sobre o conjunto já restrito ao solicitante.
 - Manter resumo, estado vazio, tabela desktop e cartões mobile.
 
 ### Abertura
@@ -53,16 +53,25 @@ preservados; dados de outro solicitante continuarão indisponíveis.
 
 ## Critérios de aceite
 
-- [ ] Lista real contém apenas chamados do usuário autenticado.
-- [ ] Abertura persiste chamado e histórico e redireciona para o detalhe.
-- [ ] Categorias inativas não podem ser usadas.
-- [ ] Detalhe de outro colaborador é tratado como indisponível.
-- [ ] Comentário autorizado persiste e comentário em encerrado é recusado.
-- [ ] POST sem CSRF válido não altera dados.
-- [ ] Fixtures visuais e todas as regressões continuam aprovadas.
+- [x] Lista real contém apenas chamados do usuário autenticado.
+- [x] Abertura persiste chamado e histórico e redireciona para o detalhe.
+- [x] Categorias inativas não podem ser usadas.
+- [x] Detalhe de outro colaborador é tratado como indisponível.
+- [x] Comentário autorizado persiste e comentário em encerrado é recusado.
+- [x] POST sem CSRF válido não altera dados.
+- [x] Fixtures visuais e todas as regressões continuam aprovadas.
 
 ## Fora do escopo
 
 - Fluxo de atendimento do técnico.
 - Administração de usuários e categorias.
 - Reparo ou importação no MariaDB local.
+
+## Evidências
+
+- `tests/collaborator_ticket_controller_test.php` comprova isolamento por
+  solicitante, categorias ativas, abertura, detalhe, comentário e recusa após
+  encerramento.
+- A suíte de CSRF valida tokens corretos e incorretos; os dois formulários reais
+  incluem o token da sessão.
+- Oito suítes e o lint PHP foram executados sem regressões.

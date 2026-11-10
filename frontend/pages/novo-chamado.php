@@ -2,11 +2,19 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../components/view_helpers.php';
-$allowedRoles = ['colaborador', 'tecnico'];
+$allowedRoles = ['colaborador'];
 require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Colaborador'));
-$categories = is_array($categories ?? null) ? $categories : [];
+$collaboratorController = null;
+$actor = ['id' => (int) ($currentUserId ?? 0), 'nome' => $currentUserName, 'perfil' => (string) ($currentUserRole ?? 'colaborador')];
+if (!$skipAuth) {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $collaboratorController = $application['collaborator_ticket_controller'];
+    $categories = $collaboratorController->activeCategories();
+} else {
+    $categories = is_array($categories ?? null) ? $categories : [];
+}
 $initialForm = is_array($initialForm ?? null) ? $initialForm : [];
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $values = [
@@ -21,6 +29,10 @@ $serverError = '';
 if ($requestMethod === 'POST') {
     foreach (array_keys($values) as $field) {
         $values[$field] = trim((string) ($_POST[$field] ?? ''));
+    }
+
+    if (!$skipAuth && !$csrf->validate((string) ($_POST['_csrf'] ?? ''))) {
+        $serverError = 'Sua sessão expirou. Atualize a página e tente novamente.';
     }
 
     $titleLength = mb_strlen($values['title']);
@@ -38,8 +50,20 @@ if ($requestMethod === 'POST') {
         $errors['description'] = 'Descreva o problema com 10 a 2000 caracteres.';
     }
 
-    if ($errors === []) {
-        $serverError = 'Não foi possível abrir o chamado sem a integração com o servidor. Tente novamente mais tarde.';
+    if ($errors === [] && $serverError === '') {
+        if ($skipAuth) {
+            $serverError = 'Não foi possível abrir o chamado sem a integração com o servidor. Tente novamente mais tarde.';
+        } else {
+            try {
+                $number = $collaboratorController->open($actor, $values);
+                header('Location: chamado.php?id=' . rawurlencode((string) $number) . '&opened=1');
+                exit;
+            } catch (DomainException $exception) {
+                $serverError = $exception->getMessage();
+            } catch (Throwable) {
+                $serverError = 'Não foi possível abrir o chamado. Tente novamente mais tarde.';
+            }
+        }
     }
 }
 
@@ -75,6 +99,7 @@ $headerActive = 'tickets';
         <?php if ($serverError !== ''): ?><p class="message message--error" role="alert"><?= fixit_e($serverError) ?></p><?php endif; ?>
 
         <form class="surface-card ticket-form" method="post" action="<?= fixit_e($pageBase) ?>/novo-chamado.php" novalidate>
+            <input type="hidden" name="_csrf" value="<?= fixit_e($skipAuth ? 'fixture-token' : $csrf->token()) ?>">
             <div class="form-field">
                 <label for="title">Título *</label>
                 <input id="title" name="title" type="text" maxlength="120" placeholder="Informe um título para o chamado" value="<?= fixit_e($values['title']) ?>"<?= isset($errors['title']) ? ' aria-invalid="true" aria-describedby="title-error"' : '' ?><?= $firstInvalidField === 'title' ? ' autofocus' : '' ?> required>

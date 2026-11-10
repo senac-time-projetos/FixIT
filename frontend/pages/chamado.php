@@ -6,8 +6,21 @@ $allowedRoles = ['colaborador', 'tecnico', 'administrador'];
 require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Colaborador'));
-$ticket = is_array($ticket ?? null) ? $ticket : null;
+$controller = null;
+$actor = ['id' => (int) ($currentUserId ?? 0), 'nome' => $currentUserName, 'perfil' => (string) ($currentUserRole ?? 'colaborador')];
+if (!$skipAuth && $actor['perfil'] === 'colaborador') {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $controller = $application['collaborator_ticket_controller'];
+    $ticket = $controller->detail($actor, filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT) ?: 0);
+} else {
+    $ticket = is_array($ticket ?? null) ? $ticket : null;
+}
 $successMessage = trim((string) ($successMessage ?? ''));
+if (!$skipAuth && isset($_GET['opened'])) {
+    $successMessage = 'Chamado aberto com sucesso.';
+} elseif (!$skipAuth && isset($_GET['commented'])) {
+    $successMessage = 'Comentário enviado com sucesso.';
+}
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $comment = '';
 $commentError = '';
@@ -16,11 +29,26 @@ $isClosed = $ticket !== null && ($ticket['status'] ?? '') === 'encerrado';
 
 if ($requestMethod === 'POST' && $ticket !== null && !$isClosed) {
     $comment = trim((string) ($_POST['comment'] ?? ''));
+    if (!$skipAuth && !$csrf->validate((string) ($_POST['_csrf'] ?? ''))) {
+        $serverError = 'Sua sessão expirou. Atualize a página e tente novamente.';
+    }
     $commentLength = mb_strlen($comment);
     if ($commentLength < 2 || $commentLength > 1000) {
         $commentError = 'Escreva um comentário entre 2 e 1000 caracteres.';
-    } else {
-        $serverError = 'Não foi possível enviar o comentário sem a integração com o servidor. Tente novamente mais tarde.';
+    } elseif ($serverError === '') {
+        if ($skipAuth) {
+            $serverError = 'Não foi possível enviar o comentário sem a integração com o servidor. Tente novamente mais tarde.';
+        } else {
+            try {
+                $controller->comment($actor, (int) $ticket['number'], $comment);
+                header('Location: chamado.php?id=' . rawurlencode((string) $ticket['number']) . '&commented=1');
+                exit;
+            } catch (DomainException $exception) {
+                $serverError = $exception->getMessage();
+            } catch (Throwable) {
+                $serverError = 'Não foi possível enviar o comentário. Tente novamente mais tarde.';
+            }
+        }
     }
 }
 
@@ -56,7 +84,7 @@ $headerActive = 'tickets';
                 <p><?= $isClosed ? 'A solução permanece disponível para consulta no histórico.' : ($successMessage !== '' ? fixit_e($successMessage) : 'Acompanhe as atualizações por aqui.') ?></p>
             </div>
             <span class="status-badge status-badge--<?= fixit_e($ticket['status'] ?? 'indisponivel') ?>"><?= fixit_e(fixit_status_label((string) ($ticket['status'] ?? ''))) ?></span>
-            <?php if ($successMessage !== ''): ?><p class="message message--success detail-success-mobile" role="status">Chamado aberto com sucesso.</p><?php endif; ?>
+            <?php if ($successMessage !== ''): ?><p class="message message--success detail-success-mobile" role="status"><?= fixit_e($successMessage) ?></p><?php endif; ?>
 
             <?php if ($isClosed): ?>
                 <section class="surface-card detail-card solution-card" aria-labelledby="ticket-title">
@@ -83,6 +111,7 @@ $headerActive = 'tickets';
                 <?php if (!$isClosed): ?>
                     <?php if ($serverError !== ''): ?><p class="message message--error" role="alert"><?= fixit_e($serverError) ?></p><?php endif; ?>
                     <form method="post" action="<?= fixit_e($pageBase) ?>/chamado.php?id=<?= rawurlencode((string) ($ticket['id'] ?? '')) ?>" novalidate>
+                    <input type="hidden" name="_csrf" value="<?= fixit_e($skipAuth ? 'fixture-token' : $csrf->token()) ?>">
                     <div class="form-field">
                         <label for="comment">Adicionar comentário</label>
                         <textarea id="comment" name="comment" maxlength="1000" rows="4" placeholder="Informações adicionais sobre o problema"<?= $commentError !== '' ? ' aria-invalid="true" aria-describedby="comment-error" autofocus' : '' ?>><?= fixit_e($comment) ?></textarea>
