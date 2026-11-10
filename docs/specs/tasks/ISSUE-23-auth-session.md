@@ -1,6 +1,6 @@
 # ISSUE-23 — Integrar autenticação, sessão e permissões
 
-Status: Em validação
+Status: Concluída
 
 Issue: `#23`
 
@@ -74,3 +74,4 @@ reparo foi executada. Os testes desta Issue usam SQLite em memória.
 - `tests/login_page_test.php`: formulário, acessibilidade, CSRF e mensagem
   genérica preservados.
 - Todas as suítes anteriores continuaram aprovadas.
+- PR integrado: `#24`; Issue encerrada: `#23`.
