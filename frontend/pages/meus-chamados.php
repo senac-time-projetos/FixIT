@@ -2,11 +2,21 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../components/view_helpers.php';
-$allowedRoles = ['colaborador', 'tecnico'];
+$allowedRoles = ['colaborador'];
 require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Colaborador'));
-$tickets = is_array($tickets ?? null) ? $tickets : [];
+if (!$skipAuth) {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $controller = $application['collaborator_ticket_controller'];
+    $tickets = $controller->list([
+        'id' => (int) $currentUserId,
+        'nome' => $currentUserName,
+        'perfil' => (string) $currentUserRole,
+    ]);
+} else {
+    $tickets = is_array($tickets ?? null) ? $tickets : [];
+}
 $query = trim((string) ($_GET['q'] ?? ''));
 $query = mb_substr($query, 0, 120);
 $statusFilter = (string) ($_GET['status'] ?? 'todos');

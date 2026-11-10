@@ -28,6 +28,8 @@ ainda usam contratos de dados e serão ligadas aos controllers em outra etapa.
 `TicketService` em um único array, evitando instanciação e conexão duplicadas.
 O serviço centraliza abertura, atribuição, comentários, atualizações e
 encerramento, incluindo autorização e transações com o histórico.
+`CollaboratorTicketController` adapta os registros persistidos ao contrato das
+telas e coordena lista, abertura, detalhe e comentários do colaborador.
 
 `backend/security/` concentra sessão, CSRF e autorização; `AuthService` valida
 credenciais e mantém na sessão somente os dados mínimos do usuário. As páginas
