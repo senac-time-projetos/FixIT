@@ -1,6 +1,6 @@
 # ISSUE-26 — Implementar regras transacionais de chamados
 
-Status: Em implementação
+Status: Em revisão
 
 Issue: `#26`
 
@@ -36,16 +36,23 @@ coordenar atualizações de várias tabelas.
 
 ## Critérios de aceite
 
-- [ ] Abertura e histórico são atômicos.
-- [ ] Permissões diferenciam colaborador, técnico e administrador.
-- [ ] Dois técnicos não conseguem assumir o mesmo chamado.
-- [ ] Comentário e atualização validam autor, vínculo e tamanho.
-- [ ] Encerramento exige solução e técnico responsável.
-- [ ] Rollback é comprovado em falha controlada.
-- [ ] Regressões continuam aprovadas.
+- [x] Abertura e histórico são atômicos.
+- [x] Permissões diferenciam colaborador, técnico e administrador.
+- [x] Dois técnicos não conseguem assumir o mesmo chamado.
+- [x] Comentário e atualização validam autor, vínculo e tamanho.
+- [x] Encerramento exige solução e técnico responsável.
+- [x] Rollback é comprovado em falha controlada.
+- [x] Regressões continuam aprovadas.
 
 ## Segurança
 
 - IDs de autor e técnico vêm do usuário autenticado.
 - Exceções de domínio usam mensagens controladas, sem SQL.
 - Repositórios continuam sendo a única camada com consultas.
+
+## Evidências
+
+- `tests/ticket_service_test.php`: cobre operações válidas, recusas por perfil,
+  disputa de atribuição e rollback provocado por falha no histórico.
+- Suítes de autenticação, persistência e telas executadas sem regressão.
+- Validação PHP e verificação de diferenças sem erros.

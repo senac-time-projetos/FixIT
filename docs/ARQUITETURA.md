@@ -24,8 +24,10 @@ O `index.php` da raiz redireciona para `frontend/index.php`. A página inicial a
 e controla transações e `connection.php` é o bootstrap compartilhado. As páginas
 ainda usam contratos de dados e serão ligadas aos controllers em outra etapa.
 
-`backend/bootstrap.php` entrega a conexão e os cinco repositórios em um único
-array para controllers e services, evitando instanciação e conexão duplicadas.
+`backend/bootstrap.php` entrega a conexão, os cinco repositórios e o
+`TicketService` em um único array, evitando instanciação e conexão duplicadas.
+O serviço centraliza abertura, atribuição, comentários, atualizações e
+encerramento, incluindo autorização e transações com o histórico.
 
 `backend/security/` concentra sessão, CSRF e autorização; `AuthService` valida
 credenciais e mantém na sessão somente os dados mínimos do usuário. As páginas
@@ -44,4 +46,6 @@ Use caminhos baseados em `__DIR__` para incluir arquivos PHP. Evite SQL nas tela
 
 Permissões precisam ser verificadas no servidor, inclusive em requisições POST. Ao assumir ou encerrar um chamado, grave a alteração e o histórico na mesma transação.
 
-A área administrativa ainda não está protegida. Nesta etapa, o projeto é uma base para desenvolvimento local.
+As áreas autenticadas negam acesso por padrão e restringem cada perfil no
+servidor. A integração dos formulários com controllers permanece como próxima
+etapa do desenvolvimento local.
