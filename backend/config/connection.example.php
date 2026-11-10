@@ -1,26 +1,13 @@
 <?php
+declare(strict_types=1);
+
 /**
- * EXEMPLO DIDÁTICO de conexão PDO.
- *
- * A equipe poderá evoluir esta implementação nas próximas atividades.
+ * Exemplo de bootstrap da conexão. A aplicação deve incluir connection.php,
+ * que possui o mesmo contrato e lê database.php (arquivo local ignorado).
  */
 
-$config = require __DIR__ . '/database.php';
+require_once __DIR__ . '/PdoConnection.php';
 
-$dsn = sprintf(
-    'mysql:host=%s;port=%s;dbname=%s;charset=%s',
-    $config['host'],
-    $config['port'],
-    $config['database'],
-    $config['charset']
-);
+use FixIT\Config\PdoConnection;
 
-try {
-    $pdo = new PDO($dsn, $config['username'], $config['password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
-} catch (PDOException $exception) {
-    // Em produção, não exponha detalhes internos da exceção ao usuário.
-    exit('Não foi possível conectar ao banco de dados.');
-}
+return PdoConnection::connect(require __DIR__ . '/database.php');
