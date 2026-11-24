@@ -1,10 +1,16 @@
 # ISSUE-44 — Adicionar PostgreSQL hospedado como banco compartilhado
 
-Status: Pronta para merge
+Status: Concluída
 
 Issue: `#44`
 
 Trello: `[P1] Migrar banco compartilhado para PostgreSQL Neon`
+
+Entrega: PR `#45`, integrado à `main` em 24/11/2026.
+
+Evidências finais: schema e seed aplicados no Neon; cinco tabelas e conta
+administrativa confirmadas; login administrativo, cadastros e ciclo completo de
+chamado aprovados com rollback e sem resíduos; regressões SQLite/MySQL aprovadas.
 
 ## Resultado
 
