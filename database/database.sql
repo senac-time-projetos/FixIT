@@ -45,11 +45,11 @@ CREATE TABLE IF NOT EXISTS chamados (
     atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     encerrado_em TIMESTAMP NULL,
     CONSTRAINT fk_chamados_solicitante FOREIGN KEY (solicitante_id)
-        REFERENCES usuarios (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES usuarios (id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT fk_chamados_categoria FOREIGN KEY (categoria_id)
-        REFERENCES categorias (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES categorias (id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT fk_chamados_tecnico FOREIGN KEY (tecnico_id)
-        REFERENCES usuarios (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES usuarios (id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT chk_chamados_tecnico CHECK (status <> 'em_atendimento' OR tecnico_id IS NOT NULL),
     CONSTRAINT chk_chamados_solucao CHECK (status <> 'encerrado' OR (solucao IS NOT NULL AND CHAR_LENGTH(TRIM(solucao)) >= 10)),
     INDEX idx_chamados_solicitante_status_data (solicitante_id, status, aberto_em),
@@ -66,9 +66,9 @@ CREATE TABLE IF NOT EXISTS comentarios (
     conteudo VARCHAR(1000) NOT NULL,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_comentarios_chamado FOREIGN KEY (chamado_numero)
-        REFERENCES chamados (numero) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES chamados (numero) ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT fk_comentarios_autor FOREIGN KEY (autor_id)
-        REFERENCES usuarios (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES usuarios (id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     INDEX idx_comentarios_chamado_data (chamado_numero, criado_em),
     INDEX idx_comentarios_autor (autor_id)
 ) ENGINE=InnoDB;
@@ -83,9 +83,9 @@ CREATE TABLE IF NOT EXISTS historico_chamados (
     estado_novo VARCHAR(50) NULL,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_historico_chamado FOREIGN KEY (chamado_numero)
-        REFERENCES chamados (numero) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES chamados (numero) ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT fk_historico_autor FOREIGN KEY (autor_id)
-        REFERENCES usuarios (id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES usuarios (id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     INDEX idx_historico_chamado_data (chamado_numero, criado_em),
     INDEX idx_historico_evento (evento)
 ) ENGINE=InnoDB;

@@ -18,6 +18,10 @@ interface. Usuários e categorias são inativados; não são apagados.
 
 ## Instalação limpa
 
+Para usar MySQL 8.4 em um container isolado na porta `3307`, siga o
+[guia do ambiente Docker](../docs/SETUP_DOCKER.md). O compose executa a
+instalação limpa e o seed automaticamente na criação do volume.
+
 No phpMyAdmin, importe `database/database.sql`. Pela linha de comando, a partir da
 raiz do repositório:
 
@@ -53,6 +57,9 @@ Depois do esquema, importe `database/seeds/demo.sql`. As contas usam endereços
 
 Essas credenciais são exclusivamente fictícias. Altere ou remova as contas antes
 de qualquer ambiente compartilhado.
+
+O teste `php tests/docker_mysql_test.php` valida as cinco tabelas, o seed, um
+login real com bcrypt, o charset e rollback contra o MySQL do container.
 
 ## Recuperação
 
