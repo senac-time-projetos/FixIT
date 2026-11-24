@@ -37,6 +37,9 @@ telas e coordena lista, abertura, detalhe e comentários do colaborador.
 pelo técnico, atribuição, atualização e encerramento. As mutações permanecem no
 `TicketService`, que valida perfil, vínculo e executa chamado e histórico na
 mesma transação.
+`AdministrationController` expõe usuários e categorias somente ao perfil
+administrador. O `AdministrationService` centraliza validação, unicidade, hash de
+senha e desativação; os repositórios continuam responsáveis pelo SQL preparado.
 
 `backend/security/` concentra sessão, CSRF e autorização; `AuthService` valida
 credenciais e mantém na sessão somente os dados mínimos do usuário. As páginas
@@ -58,3 +61,5 @@ Permissões precisam ser verificadas no servidor, inclusive em requisições POS
 As áreas autenticadas negam acesso por padrão e restringem cada perfil no
 servidor. Os fluxos persistidos do colaborador e do técnico exigem sessão e CSRF
 e derivam solicitante, autor e responsável do contexto autenticado.
+Os cadastros administrativos também exigem sessão, CSRF e perfil administrativo;
+usuários e categorias são desativados sem exclusão física.

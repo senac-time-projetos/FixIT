@@ -6,8 +6,19 @@ $allowedRoles = ['administrador'];
 require __DIR__ . '/../components/session_context.php';
 require __DIR__ . '/../components/admin_context.php';
 
-$user = is_array($user ?? null) ? $user : null;
+$controller = null;
+$actor = ['id' => (int) ($currentUserId ?? 0), 'nome' => (string) ($currentUserName ?? 'Administrador'), 'perfil' => (string) ($currentUserRole ?? 'administrador')];
+$requestedId = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT) ?: null;
+if (!$skipAuth) {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $controller = $application['administration_controller'];
+    $user = $requestedId === null ? null : $controller->user($actor, $requestedId);
+} else {
+    $user = is_array($user ?? null) ? $user : null;
+    $requestedId = $requestedId ?? (isset($user['id']) ? (int) $user['id'] : null);
+}
 $isEditing = $user !== null;
+$notFound = $requestedId !== null && $user === null;
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $values = [
     'name' => (string) ($user['name'] ?? ''),
@@ -26,8 +37,24 @@ if ($requestMethod === 'POST') {
         $values[$key] = trim((string) ($_POST[$key] ?? ''));
     }
     $action = (string) ($_POST['action'] ?? 'save');
-    if ($action === 'deactivate' && $isEditing) {
-        $serverError = 'Não foi possível desativar o usuário sem a integração com o servidor. Tente novamente mais tarde.';
+    if (!$skipAuth && !$csrf->validate((string) ($_POST['_csrf'] ?? ''))) {
+        $serverError = 'Sua sessão expirou. Atualize a página e tente novamente.';
+    } elseif ($notFound) {
+        $serverError = 'Usuário não encontrado.';
+    } elseif ($action === 'deactivate' && $isEditing) {
+        if ($skipAuth) {
+            $serverError = 'Não foi possível desativar o usuário sem a integração com o servidor. Tente novamente mais tarde.';
+        } else {
+            try {
+                $controller->deactivateUser($actor, (int) $user['id']);
+                header('Location: usuarios.php?deactivated=1');
+                exit;
+            } catch (DomainException $exception) {
+                $serverError = $exception->getMessage();
+            } catch (Throwable) {
+                $serverError = 'Não foi possível desativar o usuário. Tente novamente mais tarde.';
+            }
+        }
     } else {
         $nameLength = mb_strlen($values['name']);
         if ($nameLength < 2 || $nameLength > 120) {
@@ -46,8 +73,20 @@ if ($requestMethod === 'POST') {
         if ((!$isEditing && $passwordLength < 8) || ($isEditing && $passwordLength > 0 && $passwordLength < 8)) {
             $errors['password'] = $isEditing ? 'A nova senha deve ter pelo menos 8 caracteres.' : 'A senha inicial deve ter pelo menos 8 caracteres.';
         }
-        if ($errors === []) {
-            $serverError = 'Não foi possível salvar o usuário sem a integração com o servidor. Tente novamente mais tarde.';
+        if ($errors === [] && $serverError === '') {
+            if ($skipAuth) {
+                $serverError = 'Não foi possível salvar o usuário sem a integração com o servidor. Tente novamente mais tarde.';
+            } else {
+                try {
+                    $controller->saveUser($actor, $isEditing ? (int) $user['id'] : null, $values);
+                    header('Location: usuarios.php?saved=1');
+                    exit;
+                } catch (DomainException $exception) {
+                    $serverError = $exception->getMessage();
+                } catch (Throwable) {
+                    $serverError = 'Não foi possível salvar o usuário. Tente novamente mais tarde.';
+                }
+            }
         }
     }
 }
@@ -75,16 +114,22 @@ if (!function_exists('userFieldState')) {
 <main class="app-content"><div class="page-heading"><h1>Acesso não autorizado</h1><p>Seu perfil não tem permissão para acessar a administração.</p></div><a class="button button--primary" href="<?= fixit_e($pageBase) ?>/login.php">Voltar ao login</a></main>
 <?php else: ?>
 <main class="app-content admin-content">
+    <?php if ($notFound): ?>
+        <div class="page-heading"><h1>Usuário não encontrado</h1><p>O cadastro solicitado não existe ou não está mais disponível.</p></div>
+        <a class="button button--secondary" href="<?= fixit_e($pageBase) ?>/usuarios.php">Voltar para usuários</a>
+    <?php else: ?>
     <div class="page-heading"><h1><?= fixit_e($title) ?></h1><p><?= $errors !== [] ? 'Confira os campos obrigatórios antes de continuar.' : 'O administrador define o perfil e libera o acesso.' ?></p></div>
     <?php if ($serverError !== ''): ?><p class="message message--error" role="alert"><?= fixit_e($serverError) ?></p><?php endif; ?>
     <form class="surface-card admin-form" method="post" action="<?= fixit_e($pageBase) ?>/usuario-form.php<?= $isEditing ? '?id=' . rawurlencode((string) ($user['id'] ?? '')) : '' ?>" novalidate>
+        <input type="hidden" name="_csrf" value="<?= fixit_e($skipAuth ? 'fixture-token' : $csrf->token()) ?>">
         <div class="form-field"><label for="name">Nome *</label><input id="name" name="name" maxlength="120" value="<?= fixit_e($values['name']) ?>"<?= userFieldState('name', $errors) ?><?= isset($errors['name']) ? ' autofocus' : '' ?>><?php if (isset($errors['name'])): ?><p class="form-field__error" id="name-error"><?= fixit_e($errors['name']) ?></p><?php endif; ?></div>
         <div class="form-field"><label for="email">E-mail *</label><input id="email" name="email" type="email" maxlength="160" value="<?= fixit_e($values['email']) ?>"<?= userFieldState('email', $errors) ?>><?php if (isset($errors['email'])): ?><p class="form-field__error" id="email-error"><?= fixit_e($errors['email']) ?></p><?php endif; ?></div>
         <div class="form-grid"><div class="form-field"><label for="role">Perfil *</label><select id="role" name="role"<?= userFieldState('role', $errors) ?>><?php foreach (['colaborador' => 'Colaborador', 'tecnico' => 'Técnico', 'administrador' => 'Administrador'] as $value => $label): ?><option value="<?= $value ?>"<?= $values['role'] === $value ? ' selected' : '' ?>><?= $label ?></option><?php endforeach; ?></select><?php if (isset($errors['role'])): ?><p class="form-field__error" id="role-error"><?= fixit_e($errors['role']) ?></p><?php endif; ?></div><div class="form-field"><label for="status">Situação *</label><select id="status" name="status"<?= userFieldState('status', $errors) ?>><option value="ativo"<?= $values['status'] === 'ativo' ? ' selected' : '' ?>>Ativo</option><option value="inativo"<?= $values['status'] === 'inativo' ? ' selected' : '' ?>>Inativo</option></select><?php if (isset($errors['status'])): ?><p class="form-field__error" id="status-error"><?= fixit_e($errors['status']) ?></p><?php endif; ?></div></div>
         <div class="form-field"><label for="password"><?= $isEditing ? 'Nova senha (opcional)' : 'Senha inicial *' ?></label><input id="password" name="password" type="password" autocomplete="new-password"<?= userFieldState('password', $errors) ?>><?php if (isset($errors['password'])): ?><p class="form-field__error" id="password-error"><?= fixit_e($errors['password']) ?></p><?php endif; ?></div>
         <div class="form-actions"><button class="button button--primary" type="submit" name="action" value="save"><?= $isEditing ? 'Salvar alterações' : 'Salvar usuário' ?></button><a class="button button--secondary" href="<?= fixit_e($pageBase) ?>/usuarios.php">Cancelar</a></div>
     </form>
-    <?php if ($isEditing && ($user['status'] ?? '') === 'ativo'): ?><form method="post" action="<?= fixit_e($pageBase) ?>/usuario-form.php?id=<?= rawurlencode((string) ($user['id'] ?? '')) ?>"><button class="button button--secondary" type="submit" name="action" value="deactivate">Desativar usuário</button></form><?php endif; ?>
+    <?php if ($isEditing && ($user['status'] ?? '') === 'ativo'): ?><form method="post" action="<?= fixit_e($pageBase) ?>/usuario-form.php?id=<?= rawurlencode((string) ($user['id'] ?? '')) ?>"><input type="hidden" name="_csrf" value="<?= fixit_e($skipAuth ? 'fixture-token' : $csrf->token()) ?>"><button class="button button--secondary" type="submit" name="action" value="deactivate">Desativar usuário</button></form><?php endif; ?>
+    <?php endif; ?>
 </main>
 <?php endif; ?>
 </body>
