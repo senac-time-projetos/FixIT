@@ -6,6 +6,7 @@ namespace FixIT\Controllers;
 use DomainException;
 use FixIT\Models\CategoryRepository;
 use FixIT\Models\UserRepository;
+use FixIT\Models\TicketRepository;
 use FixIT\Services\AdministrationService;
 
 final class AdministrationController
@@ -13,7 +14,8 @@ final class AdministrationController
     public function __construct(
         private readonly AdministrationService $service,
         private readonly UserRepository $users,
-        private readonly CategoryRepository $categories
+        private readonly CategoryRepository $categories,
+        private readonly TicketRepository $tickets
     ) {
     }
 
@@ -76,6 +78,29 @@ final class AdministrationController
     {
         $this->requireAdministrator($actor);
         $this->service->deactivateCategory($id);
+    }
+
+    /** @return array{total:int,aberto:int,em_atendimento:int,encerrado:int,by_category:array<string,int>,by_priority:array<string,int>} */
+    public function summary(array $actor): array
+    {
+        $this->requireAdministrator($actor);
+        $summary = $this->tickets->summary();
+        $byCategory = [];
+        foreach ($summary['por_categoria'] as $row) {
+            $byCategory[(string) $row['nome']] = (int) $row['quantidade'];
+        }
+        $byPriority = [];
+        foreach ($summary['por_prioridade'] as $row) {
+            $byPriority[(string) $row['prioridade']] = (int) $row['quantidade'];
+        }
+        return [
+            'total' => (int) $summary['total'],
+            'aberto' => (int) $summary['aberto'],
+            'em_atendimento' => (int) $summary['em_atendimento'],
+            'encerrado' => (int) $summary['encerrado'],
+            'by_category' => $byCategory,
+            'by_priority' => $byPriority,
+        ];
     }
 
     private function requireAdministrator(array $actor): void

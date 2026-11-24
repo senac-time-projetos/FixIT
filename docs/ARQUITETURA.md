@@ -43,6 +43,8 @@ mesma transação.
 `AdministrationController` expõe usuários e categorias somente ao perfil
 administrador. O `AdministrationService` centraliza validação, unicidade, hash de
 senha e desativação; os repositórios continuam responsáveis pelo SQL preparado.
+O mesmo controller entrega o resumo administrativo calculado por agregações do
+`TicketRepository`, sem tabela de dashboard ou totais mantidos manualmente.
 
 `backend/security/` concentra sessão, CSRF e autorização; `AuthService` valida
 credenciais e mantém na sessão somente os dados mínimos do usuário. As páginas

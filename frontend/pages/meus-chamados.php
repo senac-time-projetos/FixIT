@@ -6,26 +6,32 @@ $allowedRoles = ['colaborador'];
 require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Colaborador'));
-if (!$skipAuth) {
-    $application = require __DIR__ . '/../../backend/bootstrap.php';
-    $controller = $application['collaborator_ticket_controller'];
-    $tickets = $controller->list([
-        'id' => (int) $currentUserId,
-        'nome' => $currentUserName,
-        'perfil' => (string) $currentUserRole,
-    ]);
-} else {
-    $tickets = is_array($tickets ?? null) ? $tickets : [];
-}
-$query = trim((string) ($_GET['q'] ?? ''));
-$query = mb_substr($query, 0, 120);
+$query = mb_substr(trim((string) ($_GET['q'] ?? '')), 0, 120);
 $statusFilter = (string) ($_GET['status'] ?? 'todos');
 $allowedStatuses = ['todos', 'aberto', 'em_atendimento', 'encerrado'];
 if (!in_array($statusFilter, $allowedStatuses, true)) {
     $statusFilter = 'todos';
 }
+if (!$skipAuth) {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $controller = $application['collaborator_ticket_controller'];
+    $actor = [
+        'id' => (int) $currentUserId,
+        'nome' => $currentUserName,
+        'perfil' => (string) $currentUserRole,
+    ];
+    $tickets = $controller->list($actor);
+    $filters = ['busca' => $query];
+    if ($statusFilter !== 'todos') {
+        $filters['status'] = $statusFilter;
+    }
+    $visibleTickets = $controller->list($actor, $filters);
+} else {
+    $tickets = is_array($tickets ?? null) ? $tickets : [];
+}
 
-$visibleTickets = array_values(array_filter($tickets, static function (array $ticket) use ($query, $statusFilter): bool {
+if ($skipAuth) {
+    $visibleTickets = array_values(array_filter($tickets, static function (array $ticket) use ($query, $statusFilter): bool {
     $status = (string) ($ticket['status'] ?? '');
     if ($statusFilter !== 'todos' && $status !== $statusFilter) {
         return false;
@@ -37,7 +43,8 @@ $visibleTickets = array_values(array_filter($tickets, static function (array $ti
 
     $haystack = (string) ($ticket['number'] ?? '') . ' ' . (string) ($ticket['title'] ?? '');
     return mb_stripos($haystack, $query) !== false;
-}));
+    }));
+}
 
 $summary = ['aberto' => 0, 'em_atendimento' => 0, 'encerrado' => 0];
 foreach ($tickets as $ticket) {
