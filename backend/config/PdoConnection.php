@@ -12,6 +12,9 @@ final class PdoConnection
     /** @param array<string, mixed> $config */
     public static function connect(array $config): PDO
     {
+        if (isset($config['url'])) {
+            $config = self::fromUrl((string) $config['url']);
+        }
         $driver = (string) ($config['driver'] ?? 'mysql');
         if ($driver === 'sqlite') {
             $database = (string) ($config['database'] ?? ':memory:');
@@ -21,7 +24,7 @@ final class PdoConnection
             return $pdo;
         }
 
-        if ($driver !== 'mysql') {
+        if (!in_array($driver, ['mysql', 'pgsql'], true)) {
             throw new InvalidArgumentException('Driver de banco não suportado.');
         }
 
@@ -31,14 +34,16 @@ final class PdoConnection
             }
         }
 
-        $charset = (string) ($config['charset'] ?? 'utf8mb4');
-        $dsn = sprintf(
-            'mysql:host=%s;port=%s;dbname=%s;charset=%s',
-            (string) $config['host'],
-            (string) $config['port'],
-            (string) $config['database'],
-            $charset
-        );
+        if ($driver === 'mysql') {
+            $charset = (string) ($config['charset'] ?? 'utf8mb4');
+            $dsn = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=%s', (string) $config['host'], (string) $config['port'], (string) $config['database'], $charset);
+        } else {
+            $sslmode = (string) ($config['sslmode'] ?? 'require');
+            if (!in_array($sslmode, ['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'], true)) {
+                throw new InvalidArgumentException('Modo TLS do PostgreSQL inválido.');
+            }
+            $dsn = sprintf('pgsql:host=%s;port=%s;dbname=%s;sslmode=%s', (string) $config['host'], (string) $config['port'], (string) $config['database'], $sslmode);
+        }
 
         $pdo = new PDO(
             $dsn,
@@ -47,6 +52,29 @@ final class PdoConnection
         );
         self::configure($pdo, $driver);
         return $pdo;
+    }
+
+    /** @return array{driver:string,host:string,port:string,database:string,username:string,password:string,sslmode:string} */
+    public static function fromUrl(string $url): array
+    {
+        $parts = parse_url(trim($url));
+        if ($parts === false || !in_array($parts['scheme'] ?? '', ['postgres', 'postgresql'], true)) {
+            throw new InvalidArgumentException('DATABASE_URL precisa usar PostgreSQL.');
+        }
+        $database = ltrim((string) ($parts['path'] ?? ''), '/');
+        if (($parts['host'] ?? '') === '' || ($parts['user'] ?? '') === '' || $database === '') {
+            throw new InvalidArgumentException('DATABASE_URL do PostgreSQL está incompleta.');
+        }
+        parse_str((string) ($parts['query'] ?? ''), $query);
+        return [
+            'driver' => 'pgsql',
+            'host' => (string) $parts['host'],
+            'port' => (string) ($parts['port'] ?? '5432'),
+            'database' => rawurldecode($database),
+            'username' => rawurldecode((string) $parts['user']),
+            'password' => rawurldecode((string) ($parts['pass'] ?? '')),
+            'sslmode' => (string) ($query['sslmode'] ?? 'require'),
+        ];
     }
 
     public static function transaction(PDO $pdo, callable $operation): mixed
