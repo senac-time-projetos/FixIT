@@ -1,6 +1,6 @@
 # ISSUE-32 — Adicionar ambiente MySQL local com Docker
 
-Status: Em revisão
+Status: Concluída
 
 Issue: `#32`
 
@@ -43,12 +43,15 @@ do XAMPP.
 
 ## Processo
 
-O cartão Trello aguarda somente a conclusão do login da conta Primary já aberto
-no navegador. Issue, branch, spec, testes e PR permanecem rastreáveis enquanto
-isso.
+Cartão Trello: `[P1] Criar banco MySQL`.
+
+O cartão recebeu os links e evidências da entrega, teve o checklist concluído e
+foi encerrado após a integração do PR.
 
 ## Evidências
 
+- Implementação revisada e integrada pelo PR `#33`.
+- Issue `#32` encerrada automaticamente após o merge.
 - Container `fixit-db-1` saudável com MySQL `8.4.13` e porta
   `127.0.0.1:3307`.
 - Instalação limpa refeita após detectar e corrigir a incompatibilidade entre
