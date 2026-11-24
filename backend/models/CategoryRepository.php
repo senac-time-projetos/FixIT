@@ -19,6 +19,14 @@ final class CategoryRepository
         return $statement->fetch() ?: null;
     }
 
+    /** @return array<string, mixed>|null */
+    public function findByName(string $name): ?array
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM categorias WHERE nome = :nome LIMIT 1');
+        $statement->execute(['nome' => trim($name)]);
+        return $statement->fetch() ?: null;
+    }
+
     /** @return list<array<string, mixed>> */
     public function list(bool $onlyActive = false): array
     {

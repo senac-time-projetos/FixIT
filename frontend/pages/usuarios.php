@@ -6,8 +6,20 @@ $allowedRoles = ['administrador'];
 require __DIR__ . '/../components/session_context.php';
 require __DIR__ . '/../components/admin_context.php';
 
-$users = is_array($users ?? null) ? $users : [];
+if (!$skipAuth) {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $controller = $application['administration_controller'];
+    $actor = ['id' => (int) $currentUserId, 'nome' => $currentUserName, 'perfil' => (string) $currentUserRole];
+    $users = $controller->users($actor);
+} else {
+    $users = is_array($users ?? null) ? $users : [];
+}
 $successMessage = trim((string) ($successMessage ?? ''));
+if (!$skipAuth && isset($_GET['saved'])) {
+    $successMessage = 'Usuário salvo com sucesso.';
+} elseif (!$skipAuth && isset($_GET['deactivated'])) {
+    $successMessage = 'Usuário desativado com sucesso.';
+}
 $headerActive = 'users';
 $roleLabels = ['colaborador' => 'Colaborador', 'tecnico' => 'Técnico', 'administrador' => 'Administrador'];
 ?>
