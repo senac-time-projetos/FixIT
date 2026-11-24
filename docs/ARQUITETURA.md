@@ -26,12 +26,17 @@ mantêm contratos de apresentação estáveis e são ligadas aos controllers por
 O `compose.yaml` oferece MySQL 8.4 isolado em `127.0.0.1:3307`, inicializado pelo
 mesmo schema e seed usados na instalação manual, sem depender do MySQL do XAMPP.
 
-`backend/bootstrap.php` entrega a conexão, os cinco repositórios e o
-`TicketService` em um único array, evitando instanciação e conexão duplicadas.
+`backend/bootstrap.php` entrega a conexão, os cinco repositórios, o
+`TicketService` e os controllers de chamados em um único array, evitando
+instanciação e conexão duplicadas.
 O serviço centraliza abertura, atribuição, comentários, atualizações e
 encerramento, incluindo autorização e transações com o histórico.
 `CollaboratorTicketController` adapta os registros persistidos ao contrato das
 telas e coordena lista, abertura, detalhe e comentários do colaborador.
+`TechnicianTicketController` faz a mesma fronteira para a fila geral, abertura
+pelo técnico, atribuição, atualização e encerramento. As mutações permanecem no
+`TicketService`, que valida perfil, vínculo e executa chamado e histórico na
+mesma transação.
 
 `backend/security/` concentra sessão, CSRF e autorização; `AuthService` valida
 credenciais e mantém na sessão somente os dados mínimos do usuário. As páginas
@@ -51,5 +56,5 @@ Use caminhos baseados em `__DIR__` para incluir arquivos PHP. Evite SQL nas tela
 Permissões precisam ser verificadas no servidor, inclusive em requisições POST. Ao assumir ou encerrar um chamado, grave a alteração e o histórico na mesma transação.
 
 As áreas autenticadas negam acesso por padrão e restringem cada perfil no
-servidor. A integração dos formulários com controllers permanece como próxima
-etapa do desenvolvimento local.
+servidor. Os fluxos persistidos do colaborador e do técnico exigem sessão e CSRF
+e derivam solicitante, autor e responsável do contexto autenticado.

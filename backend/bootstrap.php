@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use FixIT\Controllers\CollaboratorTicketController;
+use FixIT\Controllers\TechnicianTicketController;
 use FixIT\Models\CategoryRepository;
 use FixIT\Models\CommentRepository;
 use FixIT\Models\HistoryRepository;
@@ -16,6 +17,7 @@ require_once __DIR__ . '/models/CommentRepository.php';
 require_once __DIR__ . '/models/HistoryRepository.php';
 require_once __DIR__ . '/services/TicketService.php';
 require_once __DIR__ . '/controllers/CollaboratorTicketController.php';
+require_once __DIR__ . '/controllers/TechnicianTicketController.php';
 
 $pdo = require __DIR__ . '/config/connection.php';
 $users = new UserRepository($pdo);
@@ -34,4 +36,5 @@ return [
     'history' => $history,
     'ticket_service' => $ticketService,
     'collaborator_ticket_controller' => new CollaboratorTicketController($ticketService, $tickets, $categories, $comments, $history),
+    'technician_ticket_controller' => new TechnicianTicketController($ticketService, $tickets, $categories, $comments, $history),
 ];

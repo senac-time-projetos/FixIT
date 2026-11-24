@@ -8,9 +8,11 @@ require __DIR__ . '/../components/session_context.php';
 $currentUserName = trim((string) ($currentUserName ?? 'Colaborador'));
 $controller = null;
 $actor = ['id' => (int) ($currentUserId ?? 0), 'nome' => $currentUserName, 'perfil' => (string) ($currentUserRole ?? 'colaborador')];
-if (!$skipAuth && $actor['perfil'] === 'colaborador') {
+if (!$skipAuth) {
     $application = require __DIR__ . '/../../backend/bootstrap.php';
-    $controller = $application['collaborator_ticket_controller'];
+    $controller = $actor['perfil'] === 'colaborador'
+        ? $application['collaborator_ticket_controller']
+        : $application['technician_ticket_controller'];
     $ticket = $controller->detail($actor, filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT) ?: 0);
 } else {
     $ticket = is_array($ticket ?? null) ? $ticket : null;
@@ -20,6 +22,8 @@ if (!$skipAuth && isset($_GET['opened'])) {
     $successMessage = 'Chamado aberto com sucesso.';
 } elseif (!$skipAuth && isset($_GET['commented'])) {
     $successMessage = 'Comentário enviado com sucesso.';
+} elseif (!$skipAuth && isset($_GET['closed'])) {
+    $successMessage = 'Chamado encerrado com sucesso.';
 }
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $comment = '';
@@ -27,7 +31,7 @@ $commentError = '';
 $serverError = '';
 $isClosed = $ticket !== null && ($ticket['status'] ?? '') === 'encerrado';
 
-if ($requestMethod === 'POST' && $ticket !== null && !$isClosed) {
+if ($requestMethod === 'POST' && $ticket !== null && !$isClosed && ($skipAuth || $actor['perfil'] === 'colaborador')) {
     $comment = trim((string) ($_POST['comment'] ?? ''));
     if (!$skipAuth && !$csrf->validate((string) ($_POST['_csrf'] ?? ''))) {
         $serverError = 'Sua sessão expirou. Atualize a página e tente novamente.';
@@ -108,7 +112,7 @@ $headerActive = 'tickets';
                     <?php if (($ticket['history'] ?? []) === []): ?><p class="form-help">Ainda não há atualizações neste chamado.</p><?php endif; ?>
                 </div>
 
-                <?php if (!$isClosed): ?>
+                <?php if (!$isClosed && ($skipAuth || $actor['perfil'] === 'colaborador')): ?>
                     <?php if ($serverError !== ''): ?><p class="message message--error" role="alert"><?= fixit_e($serverError) ?></p><?php endif; ?>
                     <form method="post" action="<?= fixit_e($pageBase) ?>/chamado.php?id=<?= rawurlencode((string) ($ticket['id'] ?? '')) ?>" novalidate>
                     <input type="hidden" name="_csrf" value="<?= fixit_e($skipAuth ? 'fixture-token' : $csrf->token()) ?>">
