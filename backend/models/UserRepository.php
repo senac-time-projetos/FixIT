@@ -41,8 +41,10 @@ final class UserRepository
             $params['situacao'] = $filters['situacao'];
         }
         if (trim((string) ($filters['busca'] ?? '')) !== '') {
-            $where[] = '(nome LIKE :busca OR email LIKE :busca)';
-            $params['busca'] = '%' . mb_substr(trim((string) $filters['busca']), 0, 120) . '%';
+            $where[] = '(LOWER(nome) LIKE :busca_nome OR LOWER(email) LIKE :busca_email)';
+            $search = '%' . mb_strtolower(mb_substr(trim((string) $filters['busca']), 0, 120), 'UTF-8') . '%';
+            $params['busca_nome'] = $search;
+            $params['busca_email'] = $search;
         }
         $sql = 'SELECT * FROM usuarios' . ($where === [] ? '' : ' WHERE ' . implode(' AND ', $where)) . ' ORDER BY nome, id LIMIT :limit OFFSET :offset';
         $statement = $this->pdo->prepare($sql);
@@ -58,7 +60,11 @@ final class UserRepository
     /** @param array{nome:string,email:string,senha_hash:string,perfil:string,situacao?:string} $data */
     public function create(array $data): int
     {
-        $statement = $this->pdo->prepare('INSERT INTO usuarios (nome, email, senha_hash, perfil, situacao) VALUES (:nome, :email, :senha_hash, :perfil, :situacao)');
+        $sql = 'INSERT INTO usuarios (nome, email, senha_hash, perfil, situacao) VALUES (:nome, :email, :senha_hash, :perfil, :situacao)';
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+            $sql .= ' RETURNING id';
+        }
+        $statement = $this->pdo->prepare($sql);
         $statement->execute([
             'nome' => trim($data['nome']),
             'email' => mb_strtolower(trim($data['email']), 'UTF-8'),
@@ -66,7 +72,7 @@ final class UserRepository
             'perfil' => $data['perfil'],
             'situacao' => $data['situacao'] ?? 'ativo',
         ]);
-        return (int) $this->pdo->lastInsertId();
+        return $this->insertedId($statement);
     }
 
     /** @param array{nome:string,email:string,perfil:string,situacao:string,senha_hash?:string|null} $data */
@@ -94,5 +100,12 @@ final class UserRepository
         $statement = $this->pdo->prepare("UPDATE usuarios SET situacao = 'inativo' WHERE id = :id AND situacao <> 'inativo'");
         $statement->execute(['id' => $id]);
         return $statement->rowCount() > 0;
+    }
+
+    private function insertedId(\PDOStatement $statement): int
+    {
+        return $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql'
+            ? (int) $statement->fetchColumn()
+            : (int) $this->pdo->lastInsertId();
     }
 }

@@ -14,9 +14,11 @@ final class HistoryRepository
     /** @param array{chamado_numero:int,autor_id?:int|null,evento:string,descricao:string,estado_anterior?:string|null,estado_novo?:string|null} $event */
     public function append(array $event): int
     {
-        $statement = $this->pdo->prepare(
-            'INSERT INTO historico_chamados (chamado_numero, autor_id, evento, descricao, estado_anterior, estado_novo) VALUES (:chamado_numero, :autor_id, :evento, :descricao, :estado_anterior, :estado_novo)'
-        );
+        $sql = 'INSERT INTO historico_chamados (chamado_numero, autor_id, evento, descricao, estado_anterior, estado_novo) VALUES (:chamado_numero, :autor_id, :evento, :descricao, :estado_anterior, :estado_novo)';
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+            $sql .= ' RETURNING id';
+        }
+        $statement = $this->pdo->prepare($sql);
         $statement->execute([
             'chamado_numero' => $event['chamado_numero'],
             'autor_id' => $event['autor_id'] ?? null,
@@ -25,7 +27,9 @@ final class HistoryRepository
             'estado_anterior' => $event['estado_anterior'] ?? null,
             'estado_novo' => $event['estado_novo'] ?? null,
         ]);
-        return (int) $this->pdo->lastInsertId();
+        return $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql'
+            ? (int) $statement->fetchColumn()
+            : (int) $this->pdo->lastInsertId();
     }
 
     /** @return list<array<string, mixed>> */

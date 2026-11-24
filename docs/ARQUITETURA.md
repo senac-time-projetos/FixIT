@@ -25,6 +25,9 @@ e controla transações e `connection.php` é o bootstrap compartilhado. As pág
 mantêm contratos de apresentação estáveis e são ligadas aos controllers por fluxo.
 O `compose.yaml` oferece MySQL 8.4 isolado em `127.0.0.1:3307`, inicializado pelo
 mesmo schema e seed usados na instalação manual, sem depender do MySQL do XAMPP.
+Quando `DATABASE_URL` está definida, `connection.php` usa PostgreSQL com TLS no
+lugar do arquivo local. O schema equivalente fica em `database/postgresql.sql`;
+IDs de inserts usam `RETURNING` nesse driver e `lastInsertId()` nos demais.
 
 `backend/bootstrap.php` entrega a conexão, os cinco repositórios, o
 `TicketService` e os controllers de chamados em um único array, evitando

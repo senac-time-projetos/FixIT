@@ -47,9 +47,11 @@ final class TicketRepository
     /** @param array{solicitante_id:int,categoria_id:int,titulo:string,descricao:string,prioridade:string} $data */
     public function create(array $data): int
     {
-        $statement = $this->pdo->prepare(
-            "INSERT INTO chamados (solicitante_id, categoria_id, titulo, descricao, prioridade, status) VALUES (:solicitante_id, :categoria_id, :titulo, :descricao, :prioridade, 'aberto')"
-        );
+        $sql = "INSERT INTO chamados (solicitante_id, categoria_id, titulo, descricao, prioridade, status) VALUES (:solicitante_id, :categoria_id, :titulo, :descricao, :prioridade, 'aberto')";
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+            $sql .= ' RETURNING numero';
+        }
+        $statement = $this->pdo->prepare($sql);
         $statement->execute([
             'solicitante_id' => $data['solicitante_id'],
             'categoria_id' => $data['categoria_id'],
@@ -57,7 +59,9 @@ final class TicketRepository
             'descricao' => trim($data['descricao']),
             'prioridade' => $data['prioridade'],
         ]);
-        return (int) $this->pdo->lastInsertId();
+        return $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql'
+            ? (int) $statement->fetchColumn()
+            : (int) $this->pdo->lastInsertId();
     }
 
     public function assign(int $number, int $technicianId): bool
@@ -129,13 +133,16 @@ final class TicketRepository
         }
         $search = mb_substr(trim((string) ($filters['busca'] ?? '')), 0, 120);
         if ($search !== '') {
+            $like = '%' . mb_strtolower($search, 'UTF-8') . '%';
             if (ctype_digit($search)) {
-                $where[] = '(c.numero = :numero_busca OR c.titulo LIKE :busca)';
+                $where[] = '(c.numero = :numero_busca OR LOWER(c.titulo) LIKE :busca_titulo)';
                 $params['numero_busca'] = (int) $search;
+                $params['busca_titulo'] = $like;
             } else {
-                $where[] = '(c.titulo LIKE :busca OR solicitante.nome LIKE :busca)';
+                $where[] = '(LOWER(c.titulo) LIKE :busca_titulo OR LOWER(solicitante.nome) LIKE :busca_solicitante)';
+                $params['busca_titulo'] = $like;
+                $params['busca_solicitante'] = $like;
             }
-            $params['busca'] = '%' . $search . '%';
         }
 
         $sql = self::SELECT_DETAIL

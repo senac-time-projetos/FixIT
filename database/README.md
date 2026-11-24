@@ -3,7 +3,8 @@
 ## Modelo implementado
 
 `database.sql` cria uma instalação limpa em MySQL/MariaDB com `utf8mb4`, InnoDB,
-chaves estrangeiras, restrições e índices.
+chaves estrangeiras, restrições e índices. `postgresql.sql` mantém o mesmo modelo
+para PostgreSQL hospedado; veja o [guia do PostgreSQL](../docs/SETUP_POSTGRESQL.md).
 
 | Tabela | Responsabilidade |
 | --- | --- |

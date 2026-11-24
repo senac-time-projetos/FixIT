@@ -22,8 +22,8 @@ final class CategoryRepository
     /** @return array<string, mixed>|null */
     public function findByName(string $name): ?array
     {
-        $statement = $this->pdo->prepare('SELECT * FROM categorias WHERE nome = :nome LIMIT 1');
-        $statement->execute(['nome' => trim($name)]);
+        $statement = $this->pdo->prepare('SELECT * FROM categorias WHERE LOWER(nome) = :nome LIMIT 1');
+        $statement->execute(['nome' => mb_strtolower(trim($name), 'UTF-8')]);
         return $statement->fetch() ?: null;
     }
 
@@ -36,9 +36,13 @@ final class CategoryRepository
 
     public function create(string $name, ?string $description = null): int
     {
-        $statement = $this->pdo->prepare("INSERT INTO categorias (nome, descricao, situacao) VALUES (:nome, :descricao, 'ativo')");
+        $sql = "INSERT INTO categorias (nome, descricao, situacao) VALUES (:nome, :descricao, 'ativo')";
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+            $sql .= ' RETURNING id';
+        }
+        $statement = $this->pdo->prepare($sql);
         $statement->execute(['nome' => trim($name), 'descricao' => $description === null ? null : trim($description)]);
-        return (int) $this->pdo->lastInsertId();
+        return $this->insertedId($statement);
     }
 
     public function update(int $id, string $name, ?string $description, string $status): bool
@@ -58,5 +62,12 @@ final class CategoryRepository
         $statement = $this->pdo->prepare("UPDATE categorias SET situacao = 'inativo' WHERE id = :id AND situacao <> 'inativo'");
         $statement->execute(['id' => $id]);
         return $statement->rowCount() > 0;
+    }
+
+    private function insertedId(\PDOStatement $statement): int
+    {
+        return $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql'
+            ? (int) $statement->fetchColumn()
+            : (int) $this->pdo->lastInsertId();
     }
 }

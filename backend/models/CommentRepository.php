@@ -13,13 +13,19 @@ final class CommentRepository
 
     public function create(int $ticketNumber, int $authorId, string $content): int
     {
-        $statement = $this->pdo->prepare('INSERT INTO comentarios (chamado_numero, autor_id, conteudo) VALUES (:chamado_numero, :autor_id, :conteudo)');
+        $sql = 'INSERT INTO comentarios (chamado_numero, autor_id, conteudo) VALUES (:chamado_numero, :autor_id, :conteudo)';
+        if ($this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+            $sql .= ' RETURNING id';
+        }
+        $statement = $this->pdo->prepare($sql);
         $statement->execute([
             'chamado_numero' => $ticketNumber,
             'autor_id' => $authorId,
             'conteudo' => trim($content),
         ]);
-        return (int) $this->pdo->lastInsertId();
+        return $this->pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql'
+            ? (int) $statement->fetchColumn()
+            : (int) $this->pdo->lastInsertId();
     }
 
     /** @return list<array<string, mixed>> */
