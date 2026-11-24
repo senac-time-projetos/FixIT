@@ -1,10 +1,16 @@
 # ISSUE-39 — Integrar cadastro de usuários e categorias
 
-Status: Pronta para merge
+Status: Concluída
 
 Issue: `#39`
 
 Trello: `[P2] Implementar cadastro de usuários e categorias`
+
+Entrega: PR `#40`, integrado à `main` em 24/11/2026.
+
+Evidências: lint PHP aprovado, `git diff --check` sem erros, treze suítes
+PHP aprovadas e fluxo administrativo validado no MySQL 8.4 Docker sem dados
+residuais.
 
 Dependências: Issues `#20` e `#23`.
 
