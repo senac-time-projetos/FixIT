@@ -1,10 +1,15 @@
 # ISSUE-51 — Executar validação final do MVP
 
-Status: Pronta para merge
+Status: Concluída
 
 Issue: `#51`
 
 Trello: `[P2] Executar testes da aplicação`
+
+Entrega: PR `#52`, integrado à `main` em 24/11/2026.
+
+Evidências finais: 61 arquivos PHP no lint, 17 suítes locais sem falhas e três
+suítes adicionais aprovadas no Neon, com rollback e sem resíduos.
 
 ## Resultado
 
