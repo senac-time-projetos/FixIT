@@ -1,10 +1,15 @@
 # ISSUE-43 — Integrar busca, filtros e resumo persistidos
 
-Status: Pronta para merge
+Status: Concluída
 
 Issue: `#43`
 
 Trello: `[P2] Implementar busca, filtros e resumo`
+
+Entrega: PR `#48`, integrado à `main` em 24/11/2026.
+
+Evidências finais: suíte completa aprovada; busca, filtros e agregações validados
+no MySQL Docker e PostgreSQL Neon com rollback e sem dados residuais.
 
 Dependências: Issues `#29`, `#35` e `#39`.
 
