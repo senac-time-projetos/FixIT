@@ -32,10 +32,10 @@ final class CollaboratorTicketController
     }
 
     /** @param array{id:int,perfil:string} $actor @return list<array<string, mixed>> */
-    public function list(array $actor): array
+    public function list(array $actor, array $filters = []): array
     {
         $this->requireCollaborator($actor);
-        return array_map($this->mapTicket(...), $this->tickets->listForRequester((int) $actor['id']));
+        return array_map($this->mapTicket(...), $this->tickets->listForRequester((int) $actor['id'], $filters));
     }
 
     /** @param array{id:int,nome:string,perfil:string} $actor */

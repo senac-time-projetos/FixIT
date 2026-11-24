@@ -5,12 +5,13 @@ use FixIT\Config\PdoConnection;
 use FixIT\Controllers\AdministrationController;
 use FixIT\Models\CategoryRepository;
 use FixIT\Models\UserRepository;
+use FixIT\Models\TicketRepository;
 use FixIT\Services\AdministrationService;
 
 $root = dirname(__DIR__);
 foreach ([
     '/backend/config/PdoConnection.php', '/backend/models/UserRepository.php',
-    '/backend/models/CategoryRepository.php', '/backend/services/AdministrationService.php',
+    '/backend/models/CategoryRepository.php', '/backend/models/TicketRepository.php', '/backend/services/AdministrationService.php',
     '/backend/controllers/AdministrationController.php',
 ] as $file) {
     require_once $root . $file;
@@ -37,10 +38,12 @@ function administrationFailure(callable $operation, string $message): void
 $pdo = PdoConnection::connect(['driver' => 'sqlite', 'database' => ':memory:']);
 $pdo->exec("CREATE TABLE usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT NOT NULL, email TEXT NOT NULL UNIQUE, senha_hash TEXT NOT NULL, perfil TEXT NOT NULL, situacao TEXT NOT NULL DEFAULT 'ativo')");
 $pdo->exec("CREATE TABLE categorias (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT NOT NULL UNIQUE, descricao TEXT, situacao TEXT NOT NULL DEFAULT 'ativo')");
+$pdo->exec("CREATE TABLE chamados (numero INTEGER PRIMARY KEY AUTOINCREMENT, solicitante_id INTEGER NOT NULL, categoria_id INTEGER NOT NULL, tecnico_id INTEGER, titulo TEXT NOT NULL, descricao TEXT NOT NULL, prioridade TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'aberto', solucao TEXT, aberto_em TEXT DEFAULT CURRENT_TIMESTAMP, atualizado_em TEXT DEFAULT CURRENT_TIMESTAMP, encerrado_em TEXT)");
 $users = new UserRepository($pdo);
 $categories = new CategoryRepository($pdo);
+$tickets = new TicketRepository($pdo);
 $service = new AdministrationService($users, $categories);
-$controller = new AdministrationController($service, $users, $categories);
+$controller = new AdministrationController($service, $users, $categories, $tickets);
 $administratorId = $users->create(['nome' => 'Ana Admin', 'email' => 'ana@fixit.test', 'senha_hash' => password_hash('admin123', PASSWORD_DEFAULT), 'perfil' => 'administrador']);
 $administrator = ['id' => $administratorId, 'nome' => 'Ana Admin', 'perfil' => 'administrador'];
 $collaborator = ['id' => 999, 'nome' => 'Sem acesso', 'perfil' => 'colaborador'];
@@ -58,6 +61,10 @@ $controller->deactivateUser($administrator, $userId);
 administrationAssert($users->findById($userId)['situacao'] === 'inativo', 'desativação precisa preservar e inativar usuário');
 
 $categoryId = $controller->saveCategory($administrator, null, ['name' => 'Impressora', 'description' => 'Equipamentos de impressão', 'status' => 'ativo']);
+$tickets->create(['solicitante_id' => $administratorId, 'categoria_id' => $categoryId, 'titulo' => 'Teste de resumo', 'descricao' => 'Chamado usado para validar agregações.', 'prioridade' => 'alta']);
+$summary = $controller->summary($administrator);
+administrationAssert($summary['total'] === 1 && $summary['aberto'] === 1 && $summary['by_category']['Impressora'] === 1 && $summary['by_priority']['alta'] === 1, 'resumo administrativo precisa usar agregações persistidas');
+administrationFailure(fn () => $controller->summary($collaborator), 'colaborador não pode consultar resumo administrativo');
 $controller->saveCategory($administrator, $categoryId, ['name' => 'Impressoras', 'description' => 'Impressoras e filas', 'status' => 'ativo']);
 administrationAssert($categories->findById($categoryId)['descricao'] === 'Impressoras e filas', 'edição precisa persistir descrição');
 administrationFailure(fn () => $controller->saveCategory($administrator, null, ['name' => 'Impressoras', 'description' => '', 'status' => 'ativo']), 'categoria duplicada precisa falhar');

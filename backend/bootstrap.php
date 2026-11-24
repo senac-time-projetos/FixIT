@@ -41,7 +41,7 @@ return [
     'history' => $history,
     'ticket_service' => $ticketService,
     'administration_service' => $administrationService,
-    'administration_controller' => new AdministrationController($administrationService, $users, $categories),
+    'administration_controller' => new AdministrationController($administrationService, $users, $categories, $tickets),
     'collaborator_ticket_controller' => new CollaboratorTicketController($ticketService, $tickets, $categories, $comments, $history),
     'technician_ticket_controller' => new TechnicianTicketController($ticketService, $tickets, $categories, $comments, $history),
 ];

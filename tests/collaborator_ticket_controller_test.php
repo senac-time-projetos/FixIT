@@ -66,6 +66,9 @@ $controller->open($other, [
     'category' => (string) $activeCategory, 'priority' => 'baixa',
 ]);
 controllerAssert(count($controller->list($owner)) === 1, 'lista deve restringir chamados pelo usuário autenticado');
+controllerAssert(count($controller->list($owner, ['busca' => 'impressora'])) === 1, 'busca persistida precisa localizar título sem diferenciar maiúsculas');
+controllerAssert($controller->list($owner, ['busca' => 'monitor']) === [], 'busca não pode revelar chamado de outro solicitante');
+controllerAssert(count($controller->list($owner, ['status' => 'aberto', 'busca' => (string) $number])) === 1, 'status e número precisam combinar no repositório');
 controllerAssert($controller->detail($other, $number) === null, 'detalhe não deve revelar chamado de outro colaborador');
 $detail = $controller->detail($owner, $number);
 controllerAssert($detail !== null && $detail['number'] === $number, 'detalhe autorizado deve usar o contrato visual');
@@ -74,6 +77,7 @@ $detail = $controller->detail($owner, $number);
 controllerAssert(count($detail['history']) === 2 && str_contains($detail['history'][1]['text'], 'O problema ainda acontece.'), 'comentário deve aparecer na linha do tempo');
 
 $pdo->prepare("UPDATE chamados SET status = 'encerrado', solucao = 'Resolvido em teste', encerrado_em = CURRENT_TIMESTAMP WHERE numero = :numero")->execute(['numero' => $number]);
+controllerAssert(count($controller->list($owner, ['status' => 'encerrado'])) === 1, 'filtro encerrado precisa refletir o banco');
 try {
     $controller->comment($owner, $number, 'Comentário tardio.');
     controllerAssert(false, 'chamado encerrado não pode receber comentário');

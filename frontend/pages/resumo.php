@@ -6,22 +6,35 @@ $allowedRoles = ['administrador'];
 require __DIR__ . '/../components/session_context.php';
 require __DIR__ . '/../components/admin_context.php';
 
-$tickets = is_array($tickets ?? null) ? $tickets : [];
-$summary = ['total' => count($tickets), 'aberto' => 0, 'em_atendimento' => 0, 'encerrado' => 0];
-$byCategory = [];
-$byPriority = [];
-foreach ($tickets as $ticket) {
-    $status = (string) ($ticket['status'] ?? '');
-    if (array_key_exists($status, $summary)) {
-        $summary[$status]++;
+if (!$skipAuth) {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $controller = $application['administration_controller'];
+    $actor = ['id' => (int) $currentUserId, 'nome' => $currentUserName, 'perfil' => (string) $currentUserRole];
+    $data = $controller->summary($actor);
+    $summary = ['total' => $data['total'], 'aberto' => $data['aberto'], 'em_atendimento' => $data['em_atendimento'], 'encerrado' => $data['encerrado']];
+    $byCategory = $data['by_category'];
+    $byPriority = [];
+    foreach ($data['by_priority'] as $priority => $count) {
+        $byPriority[fixit_priority_label($priority)] = $count;
     }
-    $category = trim((string) ($ticket['category'] ?? ''));
-    $priority = fixit_priority_label((string) ($ticket['priority'] ?? ''));
-    if ($category !== '') {
-        $byCategory[$category] = ($byCategory[$category] ?? 0) + 1;
-    }
-    if ($priority !== 'Indisponível') {
-        $byPriority[$priority] = ($byPriority[$priority] ?? 0) + 1;
+} else {
+    $tickets = is_array($tickets ?? null) ? $tickets : [];
+    $summary = ['total' => count($tickets), 'aberto' => 0, 'em_atendimento' => 0, 'encerrado' => 0];
+    $byCategory = [];
+    $byPriority = [];
+    foreach ($tickets as $ticket) {
+        $status = (string) ($ticket['status'] ?? '');
+        if (array_key_exists($status, $summary)) {
+            $summary[$status]++;
+        }
+        $category = trim((string) ($ticket['category'] ?? ''));
+        $priority = fixit_priority_label((string) ($ticket['priority'] ?? ''));
+        if ($category !== '') {
+            $byCategory[$category] = ($byCategory[$category] ?? 0) + 1;
+        }
+        if ($priority !== 'Indisponível') {
+            $byPriority[$priority] = ($byPriority[$priority] ?? 0) + 1;
+        }
     }
 }
 $headerActive = 'summary';
