@@ -103,6 +103,11 @@ final class PdoConnection
         $pdo->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
         if ($driver === 'mysql') {
             $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        } elseif ($driver === 'pgsql') {
+            // Poolers em modo transação não preservam prepared statements entre
+            // comandos. A emulação mantém parâmetros separados e evita estado
+            // de transação abortado sem depender da sessão física do servidor.
+            $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
         }
     }
 }

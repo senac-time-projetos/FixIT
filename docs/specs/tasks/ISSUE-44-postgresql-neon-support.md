@@ -1,6 +1,6 @@
 # ISSUE-44 — Adicionar PostgreSQL hospedado como banco compartilhado
 
-Status: Aguardando validação no Neon
+Status: Pronta para merge
 
 Issue: `#44`
 
@@ -34,6 +34,8 @@ Docker continuará disponível como ambiente local durante a transição.
 ## Compatibilidade
 
 - Inserts retornam IDs corretamente em PostgreSQL, MySQL e SQLite.
+- O pooler transacional do Neon não depende de prepared statements de sessão;
+  parâmetros continuam separados pelo PDO com emulação no driver PostgreSQL.
 - Consultas preparadas, transações e regras de autorização permanecem iguais.
 - MySQL Docker continua como fallback local até a migração ser validada.
 
@@ -46,12 +48,12 @@ Docker continuará disponível como ambiente local durante a transição.
 - [x] Repositórios retornam IDs após inserts em PostgreSQL.
 - [x] Guia documenta configuração, provisionamento e rotação de credencial.
 - [x] Testes locais continuam aprovados em SQLite e MySQL.
-- [ ] Teste hospedado é executado quando `DATABASE_URL` estiver definida.
+- [x] Teste hospedado é executado quando `DATABASE_URL` estiver definida.
 
-Validação intermediária: provisionamento, seed, administrador, administração e
-fluxo completo de chamados passaram em PostgreSQL 16 temporário, com rollback e
-sem resíduos. Falta somente injetar a URL rotacionada no ambiente para repetir a
-mesma suíte no Neon.
+Evidências: provisionamento, seed e administrador passaram em PostgreSQL 16
+temporário e no Neon. Login administrativo, cadastros e fluxo completo de
+chamados também passaram no Neon, com rollback e sem resíduos. O pooler
+transacional foi validado com parâmetros emulados pelo PDO PostgreSQL.
 
 ## Segurança
 

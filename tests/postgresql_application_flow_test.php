@@ -7,6 +7,10 @@ if (!is_string($databaseUrl) || trim($databaseUrl) === '') {
     exit(0);
 }
 
+require_once dirname(__DIR__) . '/backend/services/AuthService.php';
+
+use FixIT\Services\AuthService;
+
 $application = require dirname(__DIR__) . '/backend/bootstrap.php';
 $pdo = $application['pdo'];
 $users = $application['users'];
@@ -28,6 +32,10 @@ $adminRow = $users->findByEmail('admin@fixit.test');
 $ownerRow = $users->findByEmail('mariana@fixit.test');
 $technicianRow = $users->findByEmail('douglas@fixit.test');
 postgresqlFlowAssert($adminRow !== null && $ownerRow !== null && $technicianRow !== null, 'seed precisa fornecer os três perfis');
+$session = [];
+$auth = new AuthService($users, $session, static function (): void {});
+$authenticatedAdmin = $auth->login('admin@fixit.test', 'FixIT@Admin2026');
+postgresqlFlowAssert($authenticatedAdmin !== null && $authenticatedAdmin['perfil'] === 'administrador', 'administrador inicial precisa autenticar no PostgreSQL');
 $admin = ['id' => (int) $adminRow['id'], 'nome' => (string) $adminRow['nome'], 'perfil' => (string) $adminRow['perfil']];
 $owner = ['id' => (int) $ownerRow['id'], 'nome' => (string) $ownerRow['nome'], 'perfil' => (string) $ownerRow['perfil']];
 $technician = ['id' => (int) $technicianRow['id'], 'nome' => (string) $technicianRow['nome'], 'perfil' => (string) $technicianRow['perfil']];

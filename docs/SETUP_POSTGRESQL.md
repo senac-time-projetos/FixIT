@@ -46,6 +46,10 @@ Quando `DATABASE_URL` está definida, ela tem precedência sobre o arquivo local
 `backend/config/database.php`. Sem a variável, o projeto continua usando a
 configuração MySQL/XAMPP/Docker já documentada.
 
+URLs com host `-pooler` são suportadas. O PDO usa parâmetros emulados no driver
+PostgreSQL para não depender de prepared statements vinculados a uma sessão
+física do pool de conexões.
+
 Para validar uma base já provisionada:
 
 ```powershell
