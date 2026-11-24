@@ -6,8 +6,6 @@ $allowedRoles = ['tecnico', 'administrador'];
 require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Técnico'));
-$tickets = is_array($tickets ?? null) ? $tickets : [];
-$categories = is_array($categories ?? null) ? $categories : [];
 $query = mb_substr(trim((string) ($_GET['q'] ?? '')), 0, 120);
 $statusFilter = (string) ($_GET['status'] ?? 'todos');
 $priorityFilter = (string) ($_GET['priority'] ?? 'todas');
@@ -19,8 +17,32 @@ if (!in_array($statusFilter, ['todos', 'aberto', 'em_atendimento', 'encerrado'],
 if (!in_array($priorityFilter, ['todas', 'baixa', 'media', 'alta'], true)) {
     $priorityFilter = 'todas';
 }
+
+if (!$skipAuth) {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $controller = $application['technician_ticket_controller'];
+    $actor = ['id' => (int) $currentUserId, 'nome' => $currentUserName, 'perfil' => (string) $currentUserRole];
+    $categories = $controller->categories();
+} else {
+    $tickets = is_array($tickets ?? null) ? $tickets : [];
+    $categories = is_array($categories ?? null) ? $categories : [];
+}
 if ($categoryFilter !== 'todas' && !array_key_exists($categoryFilter, $categories)) {
     $categoryFilter = 'todas';
+}
+
+if (!$skipAuth) {
+    $filters = ['busca' => $query];
+    if ($statusFilter !== 'todos') {
+        $filters['status'] = $statusFilter;
+    }
+    if ($priorityFilter !== 'todas') {
+        $filters['prioridade'] = $priorityFilter;
+    }
+    if ($categoryFilter !== 'todas') {
+        $filters['categoria_id'] = (int) $categoryFilter;
+    }
+    $tickets = $controller->queue($actor, $filters);
 }
 
 $visibleTickets = array_values(array_filter($tickets, static function (array $ticket) use ($query, $statusFilter, $priorityFilter, $categoryFilter): bool {
@@ -97,7 +119,7 @@ $headerNavPath = '/pages/chamados.php';
             </div>
             <div class="filter-bar__actions">
                 <button class="button button--primary" type="submit">Aplicar filtros</button>
-                <a class="button button--primary" href="<?= fixit_e($pageBase) ?>/novo-chamado.php">+ Novo chamado</a>
+                <?php if ($skipAuth || ($currentUserRole ?? '') === 'tecnico'): ?><a class="button button--primary" href="<?= fixit_e($pageBase) ?>/novo-chamado.php">+ Novo chamado</a><?php endif; ?>
             </div>
         </form>
 

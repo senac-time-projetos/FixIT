@@ -7,7 +7,15 @@ require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Técnico'));
 $currentTechnicianId = $currentTechnicianId ?? $currentUserId ?? null;
-$ticket = is_array($ticket ?? null) ? $ticket : null;
+$controller = null;
+$actor = ['id' => (int) ($currentTechnicianId ?? 0), 'nome' => $currentUserName, 'perfil' => (string) ($currentUserRole ?? 'tecnico')];
+if (!$skipAuth) {
+    $application = require __DIR__ . '/../../backend/bootstrap.php';
+    $controller = $application['technician_ticket_controller'];
+    $ticket = $controller->detail($actor, filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT) ?: 0);
+} else {
+    $ticket = is_array($ticket ?? null) ? $ticket : null;
+}
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $action = (string) ($_POST['action'] ?? '');
 $update = trim((string) ($_POST['update'] ?? ''));
@@ -15,27 +23,71 @@ $solution = trim((string) ($_POST['solution'] ?? ''));
 $updateError = '';
 $solutionError = '';
 $serverError = '';
+$successMessage = isset($_GET['opened'])
+    ? 'Chamado aberto com sucesso.'
+    : (isset($_GET['assumed']) ? 'Chamado assumido com sucesso.' : (isset($_GET['updated']) ? 'Atualização registrada com sucesso.' : ''));
 
 $isOpen = $ticket !== null && ($ticket['status'] ?? '') === 'aberto' && empty($ticket['assignee_id']) && empty($ticket['assignee']);
 $isAssigned = $ticket !== null && ($ticket['status'] ?? '') === 'em_atendimento' && (string) ($ticket['assignee_id'] ?? '') === (string) $currentTechnicianId;
 $isAvailable = $isOpen || $isAssigned;
 
 if ($requestMethod === 'POST' && $isAvailable) {
+    if (!$skipAuth && !$csrf->validate((string) ($_POST['_csrf'] ?? ''))) {
+        $serverError = 'Sua sessão expirou. Atualize a página e tente novamente.';
+    }
     if ($action === 'assume' && $isOpen) {
-        $serverError = 'Não foi possível assumir o chamado sem a integração com o servidor. Tente novamente mais tarde.';
+        if ($serverError === '') {
+            if ($skipAuth) {
+                $serverError = 'Não foi possível assumir o chamado sem a integração com o servidor. Tente novamente mais tarde.';
+            } else {
+                try {
+                    $controller->assign($actor, (int) $ticket['number']);
+                    header('Location: atender-chamado.php?id=' . rawurlencode((string) $ticket['number']) . '&assumed=1');
+                    exit;
+                } catch (DomainException $exception) {
+                    $serverError = $exception->getMessage();
+                } catch (Throwable) {
+                    $serverError = 'Não foi possível assumir o chamado. Tente novamente mais tarde.';
+                }
+            }
+        }
     } elseif ($action === 'update' && $isAssigned) {
         $length = mb_strlen($update);
         if ($length < 2 || $length > 1000) {
             $updateError = 'Escreva uma atualização entre 2 e 1000 caracteres.';
-        } else {
-            $serverError = 'Não foi possível registrar a atualização sem a integração com o servidor. Tente novamente mais tarde.';
+        } elseif ($serverError === '') {
+            if ($skipAuth) {
+                $serverError = 'Não foi possível registrar a atualização sem a integração com o servidor. Tente novamente mais tarde.';
+            } else {
+                try {
+                    $controller->update($actor, (int) $ticket['number'], $update);
+                    header('Location: atender-chamado.php?id=' . rawurlencode((string) $ticket['number']) . '&updated=1');
+                    exit;
+                } catch (DomainException $exception) {
+                    $serverError = $exception->getMessage();
+                } catch (Throwable) {
+                    $serverError = 'Não foi possível registrar a atualização. Tente novamente mais tarde.';
+                }
+            }
         }
     } elseif ($action === 'close' && $isAssigned) {
         $length = mb_strlen($solution);
         if ($length < 10 || $length > 2000) {
             $solutionError = 'Escreva uma solução entre 10 e 2000 caracteres.';
-        } else {
-            $serverError = 'Não foi possível encerrar o chamado sem a integração com o servidor. Tente novamente mais tarde.';
+        } elseif ($serverError === '') {
+            if ($skipAuth) {
+                $serverError = 'Não foi possível encerrar o chamado sem a integração com o servidor. Tente novamente mais tarde.';
+            } else {
+                try {
+                    $controller->close($actor, (int) $ticket['number'], $solution);
+                    header('Location: chamado.php?id=' . rawurlencode((string) $ticket['number']) . '&closed=1');
+                    exit;
+                } catch (DomainException $exception) {
+                    $serverError = $exception->getMessage();
+                } catch (Throwable) {
+                    $serverError = 'Não foi possível encerrar o chamado. Tente novamente mais tarde.';
+                }
+            }
         }
     }
 }
@@ -60,6 +112,7 @@ $headerNavPath = '/pages/chamados.php';
 <body class="fixit-page">
     <?php require __DIR__ . '/../components/header.php'; ?>
     <main class="app-content technician-content<?= $isAssigned ? ' technician-content--service' : '' ?>">
+        <?php if ($successMessage !== ''): ?><p class="message message--success" role="status"><?= fixit_e($successMessage) ?></p><?php endif; ?>
         <?php if (!$isAvailable): ?>
             <div class="page-heading"><h1>Atendimento indisponível</h1><p>O chamado não existe, já foi encerrado ou está atribuído a outro técnico.</p></div>
             <a class="button button--secondary" href="<?= fixit_e($pageBase) ?>/chamados.php">Voltar para chamados</a>
@@ -73,6 +126,7 @@ $headerNavPath = '/pages/chamados.php';
                 <p class="detail-card__assignee"><strong>Responsável:</strong> nenhum técnico atribuído</p>
                 <?php if ($serverError !== ''): ?><p class="message message--error" role="alert"><?= fixit_e($serverError) ?></p><?php endif; ?>
                 <form method="post" action="<?= fixit_e($pageBase) ?>/atender-chamado.php?id=<?= rawurlencode((string) ($ticket['id'] ?? '')) ?>">
+                    <input type="hidden" name="_csrf" value="<?= fixit_e($skipAuth ? 'fixture-token' : $csrf->token()) ?>">
                     <button class="button button--primary" type="submit" name="action" value="assume">Assumir chamado</button>
                 </form>
             </section>
@@ -86,6 +140,7 @@ $headerNavPath = '/pages/chamados.php';
                 <p class="detail-card__meta"><strong>Responsável:</strong> <?= fixit_e($ticket['assignee'] ?? '') ?> • <?= fixit_e($ticket['category'] ?? '') ?> • Prioridade <?= mb_strtolower(fixit_e(fixit_priority_label((string) ($ticket['priority'] ?? ''))), 'UTF-8') ?></p>
                 <?php if ($serverError !== ''): ?><p class="message message--error" role="alert"><?= fixit_e($serverError) ?></p><?php endif; ?>
                 <form class="service-form" method="post" action="<?= fixit_e($pageBase) ?>/atender-chamado.php?id=<?= rawurlencode((string) ($ticket['id'] ?? '')) ?>" novalidate>
+                    <input type="hidden" name="_csrf" value="<?= fixit_e($skipAuth ? 'fixture-token' : $csrf->token()) ?>">
                     <div class="form-field"><label for="update">Atualização para o solicitante</label><textarea id="update" name="update" maxlength="1000" rows="3" placeholder="Descreva o andamento do atendimento"<?= $updateError !== '' ? ' aria-invalid="true" aria-describedby="update-error" autofocus' : '' ?>><?= fixit_e($update) ?></textarea><?php if ($updateError !== ''): ?><p class="form-field__error" id="update-error"><?= fixit_e($updateError) ?></p><?php endif; ?></div>
                     <button class="button button--primary" type="submit" name="action" value="update">Registrar atualização</button>
                     <div class="form-field"><label for="solution">Solução *</label><textarea id="solution" name="solution" maxlength="2000" rows="4" placeholder="Descreva a solução aplicada"<?= $solutionError !== '' ? ' aria-invalid="true" aria-describedby="solution-help solution-error" autofocus' : ' aria-describedby="solution-help"' ?>><?= fixit_e($solution) ?></textarea><p class="form-help" id="solution-help">Para encerrar, é obrigatório registrar uma solução.</p><?php if ($solutionError !== ''): ?><p class="form-field__error" id="solution-error"><?= fixit_e($solutionError) ?></p><?php endif; ?></div>

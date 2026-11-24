@@ -2,16 +2,21 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../components/view_helpers.php';
-$allowedRoles = ['colaborador'];
+$allowedRoles = ['colaborador', 'tecnico'];
 require __DIR__ . '/../components/session_context.php';
 
 $currentUserName = trim((string) ($currentUserName ?? 'Colaborador'));
-$collaboratorController = null;
+$ticketController = null;
 $actor = ['id' => (int) ($currentUserId ?? 0), 'nome' => $currentUserName, 'perfil' => (string) ($currentUserRole ?? 'colaborador')];
 if (!$skipAuth) {
     $application = require __DIR__ . '/../../backend/bootstrap.php';
-    $collaboratorController = $application['collaborator_ticket_controller'];
-    $categories = $collaboratorController->activeCategories();
+    if ($actor['perfil'] === 'tecnico') {
+        $ticketController = $application['technician_ticket_controller'];
+        $categories = $ticketController->categories(true);
+    } else {
+        $ticketController = $application['collaborator_ticket_controller'];
+        $categories = $ticketController->activeCategories();
+    }
 } else {
     $categories = is_array($categories ?? null) ? $categories : [];
 }
@@ -55,8 +60,9 @@ if ($requestMethod === 'POST') {
             $serverError = 'Não foi possível abrir o chamado sem a integração com o servidor. Tente novamente mais tarde.';
         } else {
             try {
-                $number = $collaboratorController->open($actor, $values);
-                header('Location: chamado.php?id=' . rawurlencode((string) $number) . '&opened=1');
+                $number = $ticketController->open($actor, $values);
+                $destination = $actor['perfil'] === 'tecnico' ? 'atender-chamado.php' : 'chamado.php';
+                header('Location: ' . $destination . '?id=' . rawurlencode((string) $number) . '&opened=1');
                 exit;
             } catch (DomainException $exception) {
                 $serverError = $exception->getMessage();
