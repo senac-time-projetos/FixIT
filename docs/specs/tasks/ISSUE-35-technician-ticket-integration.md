@@ -1,10 +1,16 @@
 # ISSUE-35 — Integrar fluxo técnico aos chamados persistidos
 
-Status: Pronta para merge
+Status: Concluída
 
 Issue: `#35`
 
 Trello: `[P1] Desenvolver fluxo de chamados`
+
+Entrega: PR `#36`, integrado à `main` em 24/11/2026.
+
+Evidências: lint PHP aprovado nos oito arquivos alterados, `git diff --check`
+sem erros, onze suítes PHP aprovadas e ciclo completo validado no MySQL 8.4
+Docker sem dados residuais.
 
 Dependências: Issues `#23`, `#26`, `#29` e `#32`.
 
