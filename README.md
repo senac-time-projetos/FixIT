@@ -6,15 +6,19 @@ O colaborador registra um problema e acompanha o atendimento. O técnico organiz
 
 ## Situação atual
 
-As telas do MVP, autenticação, permissões, schema, repositórios, regras
-transacionais e o fluxo persistido do colaborador estão implementados. Os fluxos
-persistidos do técnico e da administração continuam nas próximas entregas.
+O MVP inclui autenticação por perfil, abertura e acompanhamento de chamados,
+fila técnica com atribuição e encerramento, cadastros administrativos e resumo
+dos atendimentos. Os fluxos do colaborador, do técnico e da administração usam
+dados persistidos.
+
+Veja o [relatório de validação do MVP](docs/TEST_REPORT.md) para consultar os
+cenários cobertos e as verificações externas pendentes.
 
 ## Tecnologias
 
 - HTML, CSS, JavaScript e Bootstrap na interface.
 - PHP puro, com organização MVC simplificada.
-- MySQL e PDO para acesso aos dados.
+- PDO com MySQL local ou [PostgreSQL configurado por variável de ambiente](docs/SETUP_POSTGRESQL.md).
 - XAMPP para Apache/PHP e MySQL via XAMPP ou Docker no ambiente local.
 - Git e GitHub para versionamento; Figma para as telas.
 
