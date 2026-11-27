@@ -37,7 +37,15 @@ Neon. MySQL e PostgreSQL confirmaram rollback sem resíduos.
 
 ## Execução
 
-Suíte local completa:
+Para validar os fluxos locais sem conectar ao MySQL ou PostgreSQL, use PHP CLI
+com `pdo_sqlite` e `mbstring`:
+
+```powershell
+php tests/run_all.php --local
+```
+
+Com o [MySQL Docker configurado](SETUP_DOCKER.md), rode o conjunto completo.
+As suítes hospedadas serão executadas se `DATABASE_URL` estiver definida:
 
 ```powershell
 php tests/run_all.php
